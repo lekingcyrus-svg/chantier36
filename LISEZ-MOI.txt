@@ -1,0 +1,10 @@
+CHANTIER360 - APK construit automatiquement par GitHub
+
+1) Creer un depot GitHub PUBLIC (ex: chantier360).
+2) Y deposer TOUS ces fichiers (a la racine), y compris le dossier .github/workflows/build-apk.yml
+   (sur telephone : creer le fichier avec "Add file > Create new file", nom exact
+   .github/workflows/build-apk.yml, coller le contenu de build-apk.yml).
+3) Onglet Actions : attendre la fin de "Construire l'APK" (5 a 10 minutes, pastille verte).
+4) Onglet Releases (colonne de droite du depot) : telecharger Chantier360.apk, l'ouvrir, autoriser les sources inconnues, installer.
+
+Chaque nouveau depot de fichier reconstruit l'APK. La signature est stable : on peut mettre a jour sans desinstaller.

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Chantier360</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+:root{--bg:#E9ECEE;--card:#fff;--ink:#1E2327;--mute:#5B666E;--line:#D0D6DA;--acc:#F2B705;--onacc:#1E2327;--ok:#2E7D32;--ko:#C62828;--mid:#B26A00;--head:#1E2327;--onhead:#F2B705;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181B;--card:#1F252A;--ink:#EEF0F1;--mute:#9AA5AD;--line:#333B41;--ok:#66BB6A;--ko:#EF6C6C;--mid:#E8A33A}}
+:root[data-theme="dark"]{--bg:#14181B;--card:#1F252A;--ink:#EEF0F1;--mute:#9AA5AD;--line:#333B41;--ok:#66BB6A;--ko:#EF6C6C;--mid:#E8A33A}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--head);z-index:10}
+header{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;background:var(--head);color:var(--onhead);padding:10px 16px;font:700 22px "Barlow Condensed",Barlow,sans-serif;letter-spacing:.02em}
+header button{background:none;border:1px solid var(--onhead);color:var(--onhead);border-radius:8px;padding:6px;display:flex;align-items:center;line-height:0}
+.stripe{max-width:520px;margin:0 auto;height:8px;background:repeating-linear-gradient(-45deg,var(--acc) 0 12px,#1E2327 12px 24px)}
+#app{max-width:520px;margin:0 auto;padding:12px 14px 100px}
+h1{font:700 30px "Barlow Condensed",Barlow,sans-serif;margin:8px 0}
+h2{font:700 22px "Barlow Condensed",Barlow,sans-serif;margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 0;flex:1}
+input,select,textarea{display:block;width:100%;margin-top:4px;padding:11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=range]{padding:0;accent-color:var(--acc)}
+input[type=checkbox]{display:inline-block;width:20px;height:20px;margin:0 8px 0 0;vertical-align:middle}
+.chk{display:flex;align-items:center}
+.row{display:flex;gap:10px;align-items:flex-end}
+.btn{display:block;width:100%;text-align:center;padding:14px;border:0;border-radius:10px;background:var(--acc);color:var(--onacc);font:700 17px Barlow,sans-serif;margin-top:12px;cursor:pointer}
+.btn.sec{background:var(--bg);color:var(--ink);border:1px solid var(--line);font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.h{font-size:13px;color:var(--mute);margin:6px 0 0}
+.ph{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.ph img{width:76px;height:76px;object-fit:cover;border-radius:8px}
+.tk{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin:10px 0}.tk input{grid-column:1/3}
+.tk b{font-variant-numeric:tabular-nums}
+canvas{width:100%;height:auto;border-radius:8px;margin-top:10px;touch-action:none}
+.top{display:flex;justify-content:space-between;align-items:center}
+.tag{border:0;border-radius:99px;padding:5px 14px;font:600 14px Barlow,sans-serif;color:#fff}
+.s0{background:var(--ko)}.s1{background:var(--mid)}.s2{background:var(--ok)}
+.rp{width:100%;border-radius:8px;margin:8px 0}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.seg button{flex:1;padding:11px;border:0;background:none;color:var(--ink);font:600 16px Barlow,sans-serif}.seg .on{background:var(--acc);color:var(--onacc)}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+.t th,.t td{padding:4px 3px;text-align:left;border-bottom:1px solid var(--line)}
+.t td input{margin:0;padding:7px 5px;min-width:56px}.t td:first-child input{min-width:130px}
+.t td button{background:none;border:0;color:var(--ko);font-size:18px}
+.tot{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.tot b{font-variant-numeric:tabular-nums}.tot input{width:90px;margin:0;text-align:right}
+.big{font:700 24px "Barlow Condensed",sans-serif}
+.warn{border-left:5px solid var(--acc);padding:8px 12px;font-size:13px;color:var(--mute);background:var(--card);border-radius:0 8px 8px 0}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--head);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
+nav div{display:flex;width:100%;max-width:520px}
+nav button{flex:1;background:none;border:0;color:#B9C2C8;padding:8px 0;font:600 13px Barlow,sans-serif}
+nav button svg,.chips button svg{display:block;margin:0 auto 3px}.btn svg{vertical-align:-6px;margin-right:8px}nav button.on{color:var(--onhead)}
+#ov{display:none;position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 30px}
+#ov .doc{max-width:700px;margin:0 auto}
+#ov dl{margin:0}#ov dt{font-weight:700;margin-top:10px}#ov dd{margin:2px 0}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--head);color:var(--onhead);padding:10px 16px;border-radius:99px;z-index:50;display:none;font-weight:600}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}.chips button{padding:8px 2px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:600 14px Barlow,sans-serif}.chips .on{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.ok{color:var(--ok)}.bad{color:var(--mid)}
+@media print{body>*:not(#ov){display:none!important}#ov{position:static;overflow:visible;background:#fff;color:#000;padding:0;display:block}.noprint{display:none}}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1E2327"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"></head>
+<body>
+<header><span>Chantier360</span><span style="display:flex;gap:8px"><button onclick="aide()" aria-label="Aide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg></button><button onclick="tg()" aria-label="Changer de thème"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button></span></header>
+<div class="stripe"></div>
+<div id="app"></div>
+<nav><div id="nav"></div></nav>
+<div id="ov"></div>
+<div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S={reps:{},tasks:[{n:'Terrassement',p:0},{n:'Fondations',p:0},{n:'Élévation',p:0}],res:[],met:[],k:1.25,tva:18,theme:''};
+try{Object.assign(S,JSON.parse(localStorage.getItem('c360')||'{}'))}catch(e){}
+function save(){try{localStorage.setItem('c360',JSON.stringify(S))}catch(e){msg('Stockage plein : supprimez des photos.')}}
+const today=()=>new Date().toISOString().slice(0,10),f=(n,d=2)=>(Math.round(n*10**d)/10**d).toLocaleString('fr-FR');
+let tab='ch',D=today(),sub='calc',kind='beton',LN=[],ph=0;
+const R=()=>S.reps[D]||(S.reps[D]={meteo:'Ensoleillé',intemp:false,heures:0,eff:0,travaux:'',incid:'',photos:[]});
+const LOTS=['Terrassement','Gros œuvre','Maçonnerie','Étanchéité','Plomberie','Électricité','Menuiserie','Peinture','VRD'],ST=['Ouverte','En cours','Levée'];
+function msg(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(msg.t);msg.t=setTimeout(()=>e.style.display='none',2600)}
+function theme(){if(S.theme)document.documentElement.dataset.theme=S.theme;else delete document.documentElement.dataset.theme}
+function tg(){S.theme=document.documentElement.dataset.theme==='dark'||(!S.theme&&matchMedia('(prefers-color-scheme:dark)').matches)?'light':'dark';theme();save()}
+const IC={"ch": "<path d=\"M4 15a8 8 0 0 1 16 0\"/><path d=\"M2.5 15h19v3h-19z\"/><path d=\"M12 7v4\"/>", "re": "<path d=\"M5 21V4\"/><path d=\"M5 4h11l-2 4 2 4H5\"/>", "me": "<rect x=\"2.5\" y=\"8\" width=\"19\" height=\"8\" rx=\"1.5\"/><path d=\"M6 8v3M10 8v4M14 8v3M18 8v4\"/>", "ca": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><path d=\"M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01\"/>", "st": "<path d=\"M3 5h18\"/><path d=\"M6 5v15M18 5v15\"/><path d=\"M3 20h18\"/>", "es": "<path d=\"M3 20h5v-5h5v-5h5V5h3\"/>", "bl": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"1\"/><path d=\"M3 12h18M9 5v7M15 12v7\"/>", "fo": "<path d=\"M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z\"/><path d=\"M4 8l2-4h12l2 4\"/><path d=\"M8 14c1.5-1 2.5 1 4 0s2.5-1 4 0\"/>", "su": "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"1\"/><path d=\"M2 5v14M22 5v14\"/>", "cam": "<path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7\"/><path d=\"M12 17h.01\"/>", "theme": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 3a9 9 0 0 1 0 18z\" fill=\"currentColor\"/>"},ic=(n,z=24)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+const T=[['ch','ch','Chantier'],['re','re','Réserves'],['me','me','Métrés'],['ca','ca','Calculs']];
+function go(t){tab=t;render()}
+function render(){$('#nav').innerHTML=T.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="go('${t[0]}')">${ic(t[1])}${t[2]}</button>`).join('');({ch,re,me,ca}[tab])();scrollTo(0,0)}
+function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,720/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.55),c)};im.src=r.result};r.readAsDataURL(file)}
+
+/* Chantier */
+function ch(){const r=R();
+$('#app').innerHTML=`<h1>Chantier</h1><div class="card"><label>Date du rapport<input type="date" value="${D}" onchange="D=this.value||today();ch()"></label>
+<div class="row"><label>Météo<select onchange="R().meteo=this.value;save()">${['Ensoleillé','Nuageux','Pluie','Vent fort','Gel','Canicule'].map(m=>`<option ${m===r.meteo?'selected':''}>${m}</option>`).join('')}</select></label>
+<label>Effectifs<input type="number" inputmode="numeric" min="0" value="${r.eff}" oninput="R().eff=+this.value;save()"></label></div>
+<label class="chk"><input type="checkbox" ${r.intemp?'checked':''} onchange="R().intemp=this.checked;save()">Intempérie : travaux arrêtés</label>
+<label>Heures perdues<input type="number" inputmode="decimal" min="0" step="0.5" value="${r.heures}" oninput="R().heures=+this.value;save()"></label>
+<label>Travaux réalisés<textarea rows="3" oninput="R().travaux=this.value;save()">${esc(r.travaux)}</textarea></label>
+<label>Incidents et observations<textarea rows="2" oninput="R().incid=this.value;save()">${esc(r.incid)}</textarea></label>
+<label class="btn sec">${ic('cam',20)}Ajouter des photos<input type="file" accept="image/*" capture="environment" multiple hidden onchange="addPh(this)"></label>
+<div class="ph">${r.photos.map((p,i)=>`<img src="${p}" alt="Photo ${i+1}" onclick="delPh(${i})">`).join('')}</div>${r.photos.length?'<p class="h">Touchez une photo pour la supprimer.</p>':''}</div>
+<h2>Avancement</h2><div class="card">${S.tasks.map((t,i)=>`<div class="tk"><span>${esc(t.n)}</span><b id="p${i}">${t.p} %</b><input type="range" min="0" max="100" step="5" value="${t.p}" aria-label="Avancement ${esc(t.n)}" oninput="S.tasks[${i}].p=+this.value;$('#p${i}').textContent=this.value+' %';save()"></div>`).join('')}
+<div class="row"><label>Nouvelle tâche<input id="nt"></label><button class="btn sec" style="width:auto;padding:11px 16px" onclick="addT()">Ajouter</button></div></div>
+<button class="btn" onclick="rapport()">Générer le rapport du jour</button>`}
+function addPh(el){[...el.files].forEach(f=>shrink(f,d=>{R().photos.push(d);save();if(tab==='ch')ch()}))}
+function delPh(i){R().photos.splice(i,1);save();ch()}
+function addT(){const v=$('#nt').value.trim();if(v){S.tasks.push({n:v,p:0});save();ch()}}
+function ov(h){$('#ov').innerHTML=`<div class="doc"><div class="noprint" style="display:flex;gap:10px"><button class="btn" onclick="print()">Imprimer / PDF</button><button class="btn sec" onclick="$('#ov').style.display='none'">Fermer</button></div>${h}</div>`;$('#ov').style.display='block'}
+function rapport(){const r=R(),op=S.res.filter(x=>x.st!=='Levée');
+ov(`<h1>Rapport journalier</h1><p>${new Date(D+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p><dl><dt>Météo</dt><dd>${r.meteo}${r.intemp?`, intempérie : ${r.heures} h perdues`:''}</dd><dt>Effectifs</dt><dd>${r.eff} personne(s)</dd><dt>Travaux réalisés</dt><dd>${esc(r.travaux)||'Non renseigné'}</dd><dt>Incidents et observations</dt><dd>${esc(r.incid)||'Aucun'}</dd>
+<dt>Avancement</dt><dd>${S.tasks.map(t=>`${esc(t.n)} : ${t.p} %`).join('<br>')}</dd><dt>Réserves non levées</dt><dd>${op.length?op.map(x=>`RES-${String(x.id).padStart(3,'0')} ${esc(x.lot)} : ${esc(x.desc)}`).join('<br>'):'Aucune'}</dd></dl><div class="ph">${r.photos.map(p=>`<img src="${p}" alt="">`).join('')}</div>`)}
+
+/* Réserves */
+function re(){ph=0;
+$('#app').innerHTML=`<h1>Réserves</h1><div class="card"><label class="btn sec" style="margin-top:0">${ic('cam',20)}Photo du défaut<input type="file" accept="image/*" capture="environment" hidden onchange="rph(this)"></label><canvas id="cv" hidden></canvas><p class="h" id="hint" hidden>Entourez le défaut au doigt.</p>
+<div class="row"><label>Lot<select id="rl">${LOTS.map(l=>`<option>${l}</option>`).join('')}</select></label><label>Responsable<input id="rr" placeholder="Entreprise"></label></div>
+<label>Description<textarea id="rd" rows="2"></textarea></label><button class="btn" onclick="saveR()">Enregistrer la réserve</button><p class="h">La position GPS est ajoutée si vous l’autorisez.</p></div>
+<h2>${S.res.length} réserve(s), ${S.res.filter(x=>x.st!=='Levée').length} à lever</h2>${S.res.length?'':'<p class="h">Aucune réserve. Prenez une photo pour en créer une.</p>'}`+
+S.res.map((x,i)=>`<div class="card"><div class="top"><b>RES-${String(x.id).padStart(3,'0')}</b><button class="tag s${ST.indexOf(x.st)}" onclick="cyc(${i})" aria-label="Changer le statut">${x.st}</button></div>${x.photo?`<img class="rp" src="${x.photo}" alt="Photo de la réserve">`:''}<p style="margin:4px 0">${esc(x.desc)}</p><p class="h">${esc(x.lot)}, ${esc(x.resp||'responsable non défini')}, ${x.date}${x.gps?`, GPS ${x.gps}`:''}</p></div>`).reverse().join('')}
+function rph(el){const fl=el.files[0];if(!fl)return;shrink(fl,(d,s)=>{const c=$('#cv');c.width=s.width;c.height=s.height;const x=c.getContext('2d');x.drawImage(s,0,0);c.hidden=false;$('#hint').hidden=false;ph=1;let dr=0;x.strokeStyle='#E53935';x.lineWidth=Math.max(4,c.width/70);x.lineCap='round';
+const p=e=>{const b=c.getBoundingClientRect();return[(e.clientX-b.left)*c.width/b.width,(e.clientY-b.top)*c.height/b.height]};
+c.onpointerdown=e=>{dr=1;c.setPointerCapture(e.pointerId);x.beginPath();x.moveTo(...p(e))};c.onpointermove=e=>{if(dr){x.lineTo(...p(e));x.stroke()}};c.onpointerup=c.onpointercancel=()=>dr=0})}
+function saveR(){const x={id:S.res.reduce((m,r)=>Math.max(m,r.id),0)+1,desc:$('#rd').value.trim(),lot:$('#rl').value,resp:$('#rr').value.trim(),st:'Ouverte',date:today(),photo:ph?$('#cv').toDataURL('image/jpeg',.6):'',gps:''};
+if(!x.desc&&!x.photo){msg('Ajoutez une photo ou une description.');return}
+S.res.push(x);save();re();
+if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>{x.gps=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5);save();if(tab==='re')re()},()=>{},{timeout:5000})}
+function cyc(i){S.res[i].st=ST[(ST.indexOf(S.res[i].st)+1)%3];save();re()}
+
+/* Métrés et DPGF */
+const EL={Semelle:80,Longrine:90,Poteau:200,Poutre:150,Dalle:100,Voile:90},NV=id=>+($('#'+id).value)||0;
+function me(){$('#app').innerHTML=`<h1>Métrés et DPGF</h1><div class="seg"><button class="${sub==='calc'?'on':''}" onclick="sub='calc';me()">Calculer</button><button class="${sub==='dp'?'on':''}" onclick="sub='dp';me()">DPGF (${S.met.length})</button></div><div id="sv"></div>`;sub==='calc'?calcV():dpgf()}
+function calcV(){const fm={
+beton:`<label>Élément<select id="e" onchange="$('#r').value=EL[this.value];cc()">${Object.keys(EL).map(k=>`<option>${k}</option>`).join('')}</select></label><div class="row"><label>Nombre<input id="n" type="number" value="1" oninput="cc()"></label><label>Longueur (m)<input id="L" type="number" step="any" value="5" oninput="cc()"></label></div><div class="row"><label>Largeur (m)<input id="l" type="number" step="any" value="0.2" oninput="cc()"></label><label>Hauteur (m)<input id="h" type="number" step="any" value="3" oninput="cc()"></label></div><div class="row"><label>Perte (%)<input id="p" type="number" value="5" oninput="cc()"></label><label>Acier (kg/m³)<input id="r" type="number" value="80" oninput="cc()"></label></div>`,
+maco:`<div class="row"><label>Longueur du mur (m)<input id="L" type="number" step="any" value="10" oninput="cc()"></label><label>Hauteur (m)<input id="h" type="number" step="any" value="2.7" oninput="cc()"></label></div><div class="row"><label>Ouvertures (m²)<input id="o" type="number" step="any" value="3.6" oninput="cc()"></label><label>Perte (%)<input id="p" type="number" value="5" oninput="cc()"></label></div><p class="h">Blocs de 20 × 50 cm : 10 blocs par m².</p>`,
+rev:`<div class="row"><label>Nombre de pièces<input id="n" type="number" value="1" oninput="cc()"></label><label>Perte (%)<input id="p" type="number" value="10" oninput="cc()"></label></div><div class="row"><label>Longueur (m)<input id="L" type="number" step="any" value="4" oninput="cc()"></label><label>Largeur (m)<input id="l" type="number" step="any" value="3" oninput="cc()"></label></div>`};
+$('#sv').innerHTML=`<div class="card"><label>Type d’ouvrage<select onchange="kind=this.value;calcV()">${[['beton','Béton armé'],['maco','Maçonnerie de blocs'],['rev','Revêtement de sol']].map(o=>`<option value="${o[0]}" ${o[0]===kind?'selected':''}>${o[1]}</option>`).join('')}</select></label>${fm[kind]}<div id="out"></div></div><p class="h">Largeur = épaisseur pour une dalle ou un voile.</p>`;if(kind==='beton')$('#r').value=EL[$('#e').value];cc()}
+function cc(){let L=NV('L'),l=NV('l'),h=NV('h'),n=NV('n'),p=1+NV('p')/100;
+if(kind==='beton'){const e=$('#e').value,v=n*L*l*h,cof=n*(e==='Dalle'?L*l:e==='Poutre'||e==='Longrine'?L*(l+2*h):e==='Voile'?2*L*h:2*(L+l)*h);
+LN=[{d:'Béton '+e,q:v*p,u:'m³'},{d:'Acier HA '+e,q:v*NV('r')*p,u:'kg'},{d:'Coffrage '+e,q:cof,u:'m²'}]}
+else if(kind==='maco'){const a=Math.max(0,L*h-NV('o'));LN=[{d:'Maçonnerie de blocs (surface nette)',q:a,u:'m²'},{d:'Blocs 20×50',q:Math.ceil(a*10*p),u:'u'}]}
+else LN=[{d:'Revêtement de sol',q:n*L*l*p,u:'m²'}];
+$('#out').innerHTML=`<div style="margin-top:12px">${LN.map(x=>`<div class="tot"><span>${x.d}</span><b>${f(x.q)} ${x.u}</b></div>`).join('')}</div><button class="btn" onclick="addL()">Ajouter au DPGF</button>`}
+function addL(){LN.forEach(x=>S.met.push({d:x.d,q:+x.q.toFixed(2),u:x.u,pu:0}));save();msg('Ajouté au DPGF');me()}
+function dpgf(){const tot=S.met.reduce((s,m)=>s+m.q*m.pu,0),pv=tot*S.k;
+$('#sv').innerHTML=(S.met.length?`<div class="card" style="overflow-x:auto"><table class="t"><tr><th>Désignation</th><th>Qté</th><th>U</th><th>PU HT</th><th>Total</th><th></th></tr>${S.met.map((m,i)=>`<tr><td><input value="${esc(m.d)}" onchange="S.met[${i}].d=this.value;save()"></td><td><input type="number" step="any" value="${m.q}" onchange="S.met[${i}].q=+this.value;save();dpgf()"></td><td>${m.u}</td><td><input type="number" step="any" value="${m.pu}" onchange="S.met[${i}].pu=+this.value;save();dpgf()"></td><td>${f(m.q*m.pu,0)}</td><td><button onclick="S.met.splice(${i},1);save();dpgf()" aria-label="Supprimer la ligne">✕</button></td></tr>`).join('')}</table></div>
+<div class="card"><div class="tot"><span>Débours sec HT</span><b>${f(tot,0)} FCFA</b></div><div class="tot"><span>Coefficient de vente</span><input type="number" step="0.01" value="${S.k}" onchange="S.k=+this.value||1;save();dpgf()"></div><div class="tot"><span>Prix de vente HT</span><b>${f(pv,0)} FCFA</b></div><div class="tot"><span>TVA (%)</span><input type="number" step="0.5" value="${S.tva}" onchange="S.tva=+this.value;save();dpgf()"></div><div class="tot big"><span>Total TTC</span><span>${f(pv*(1+S.tva/100),0)} FCFA</span></div></div>
+<button class="btn" onclick="cp()">Copier pour Excel</button><button class="btn sec" onclick="if(confirm('Vider le DPGF ?')){S.met=[];save();dpgf()}">Vider le DPGF</button><div id="csvbox"></div>`:`<p class="h" style="margin-top:14px">Aucune ligne. Calculez un ouvrage, puis ajoutez-le au DPGF et saisissez vos prix unitaires.</p>`)}
+function csv(){return [['Désignation','Qté','Unité','PU HT','Total HT'],...S.met.map(m=>[m.d,m.q,m.u,m.pu,(m.q*m.pu).toFixed(2)])].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\n')}
+function cp(){const t=csv(),sh=()=>{$('#csvbox').innerHTML='<textarea rows="6">'+esc(t)+'</textarea><p class="h">Sélectionnez le texte et copiez-le.</p>'};try{navigator.clipboard.writeText(t).then(()=>msg('Copié : collez dans Excel'),sh)}catch(e){sh()}}
+
+/* Calculs */
+const c5=x=>Math.ceil(x*20-1e-9)/20;
+
+let cs='st',sh='re';
+const CS=[['st','st','Structure'],['es','es','Escalier'],['bl','bl','Blocs'],['fo','fo','Fosse septique'],['su','su','Surfaces']];
+function ca(){$('#app').innerHTML=`<h1>Calculs</h1><div class="chips">${CS.map(c=>`<button class="${cs===c[0]?'on':''}" onclick="cs='${c[0]}';ca()">${ic(c[1])}${c[2]}</button>`).join('')}</div><div id="cv2"></div><p class="warn" style="margin-top:14px">Résultats indicatifs pour le pré-dimensionnement et les quantités. À valider par un professionnel habilité.</p>`;({st:cst,es:ces,bl:cbl,fo:cfo,su:csu}[cs])()}
+const inp=(id,lb,v)=>`<label>${lb}<input id="${id}" type="number" inputmode="decimal" step="any" value="${v}" oninput="cx()"></label>`;
+const sl=(id,lb,o,d)=>`<label>${lb}<select id="${id}" onchange="cx()">${o.map(x=>`<option value="${x[0]}" ${x[0]==d?'selected':''}>${x[1]}</option>`).join('')}</select></label>`;
+const rs=r=>r.map(x=>`<div class="tot"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+const cx=()=>({es:oes,bl:obl,fo:ofo,su:osu}[cs])();
+function addX(){LN.forEach(x=>S.met.push({d:x.d,q:+x.q.toFixed(2),u:x.u,pu:0}));save();msg('Ajouté au DPGF')}
+const addB=`<button class="btn" onclick="addX()">Ajouter au DPGF</button>`;
+
+function ces(){$('#cv2').innerHTML=`<div class="card">${inp('eh','Hauteur à monter (m)',2.8)}<div class="row">${inp('eg','Giron souhaité (cm)',28)}${inp('ew','Largeur (m)',1)}</div>${inp('et','Épaisseur de la paillasse (cm)',12)}<div id="ox"></div></div><p class="h">Formule de Blondel : 2 h + g entre 59 et 66 cm (idéal 63).</p>`;oes()}
+function oes(){const H=NV('eh')*100,g=NV('eg'),w=NV('ew'),t=NV('et')/100;if(H<=0){$('#ox').innerHTML='';return}
+const n=Math.max(1,Math.round(H/17)),h=H/n,b=2*h+g,Lp=(n-1)*g/100,Li=Math.hypot(H/100,Lp),an=Math.atan2(h,g)*180/Math.PI,v=w*(Li*t+n*.5*(h/100)*(g/100));
+LN=[{d:'Béton escalier',q:v*1.05,u:'m³'},{d:'Acier HA escalier',q:v*90,u:'kg'}];
+$('#ox').innerHTML=`<div style="margin-top:12px">${rs([['Nombre de contremarches',n],['Hauteur de marche',f(h,1)+' cm'],['Nombre de girons',n-1],['Blondel (2h+g)',`<span class="${b>=59&&b<=66?'ok':'bad'}">${f(b,1)} cm ${b>=59&&b<=66?'✓':'à ajuster'}</span>`],['Giron idéal',f(63-2*h,1)+' cm'],['Emprise au sol',f(Lp,2)+' m'],['Pente',f(an,0)+' °'],['Béton (+5 %)',f(v*1.05)+' m³'],['Acier (≈ 90 kg/m³)',f(v*90,0)+' kg']])}</div>${addB}`}
+
+function cbl(){$('#cv2').innerHTML=`<div class="card"><div class="row">${inp('bL','Longueur (m)',10)}${inp('bw','Largeur pièce (m)',0)}</div><p class="h">Clôture ou mur seul : largeur 0. Chambre : longueur et largeur (4 murs).</p><div class="row">${inp('bh','Hauteur (m)',2.5)}${inp('bo','Ouvertures (m²)',0)}</div><div class="row">${sl('bt','Épaisseur',[[10,'10 cm'],[15,'15 cm'],[20,'20 cm']],15)}${sl('bz','Format bloc',[[12.5,'40×20'],[10,'50×20']],12.5)}</div>${inp('bp','Perte (%)',5)}<div id="ox"></div></div>`;obl()}
+function obl(){const L=NV('bL'),w=NV('bw'),h=NV('bh'),t=NV('bt'),u=NV('bz'),p=1+NV('bp')/100,P=w>0?2*(L+w):L,br=P*h,a=Math.max(0,br-NV('bo')),nb=Math.ceil(a*u*p),mo=a*(t/100)*.13,ci=Math.ceil(mo*7),sa=mo*1.1;
+LN=[{d:'Maçonnerie de blocs '+t+' cm',q:a,u:'m²'},{d:'Blocs '+t+' cm',q:nb,u:'u'}];
+$('#ox').innerHTML=`<div style="margin-top:12px">${rs([['Longueur de mur',f(P)+' m'],['Surface brute',f(br)+' m²'],['Surface nette',f(a)+' m²'],['Nombre de blocs',`${f(nb,0)} u`],['Rangs de blocs',Math.ceil(h/.2)],['Mortier',f(mo)+' m³'],['Ciment (350 kg/m³)',ci+' sacs de 50 kg'],['Sable',f(sa)+' m³']])}</div>${addB}`}
+
+function cfo(){$('#cv2').innerHTML=`<div class="card"><div class="row">${inp('fn','Usagers',6)}${inp('fq','Eau (L/pers/jour)',150)}</div><div class="row">${inp('ft','Rétention (jours)',2)}${inp('fy','Vidange (ans)',2)}</div><div class="row">${inp('fh','Profondeur utile (m)',1.5)}${inp('fk','Sol (L/m²/jour)',30)}</div>${inp('fd','Diamètre puits perdu (m)',1.5)}<div id="ox"></div></div><p class="h">Sol : sable 40-50, limon 20-30, argile 10 ou moins (valeurs indicatives).</p>`;ofo()}
+function ofo(){const n=NV('fn'),q=NV('fq'),h=NV('fh')||1.5,k=NV('fk')||1,d=NV('fd')||1,V=Math.max(2,n*(q*NV('ft')/1000+.04*NV('fy'))),S2=V/h,l=Math.sqrt(S2/2),L=2*l,Si=n*q/k;
+$('#ox').innerHTML=`<div style="margin-top:12px">${rs([['Volume utile',f(V)+' m³'],['Dimensions intérieures',`${f(L)} × ${f(l)} × ${f(h)} m`],['Compartiment 1 (2/3)',f(L*2/3)+' m'],['Compartiment 2 (1/3)',f(L/3)+' m'],['Surface d’infiltration',f(Si)+' m²'],['Puits perdu Ø'+f(d)+' m',f(Si/(Math.PI*d))+' m de profondeur']])}</div><p class="h">Prévoir cloison, regard, ventilation, et ≥ 30 m d’un puits d’eau potable.</p>`}
+
+const SH={re:['Longueur','Largeur'],tr:['Base','Hauteur'],ce:['Rayon'],tz:['Grande base','Petite base','Hauteur'],el:['Longueur totale','Largeur totale','Longueur du retrait','Largeur du retrait']};
+function csu(){$('#cv2').innerHTML=`<div class="card"><label>Forme<select onchange="sh=this.value;csu()">${[['re','Rectangle'],['tr','Triangle'],['ce','Cercle'],['tz','Trapèze'],['el','Forme en L']].map(o=>`<option value="${o[0]}" ${o[0]===sh?'selected':''}>${o[1]}</option>`).join('')}</select></label><div class="row" style="flex-wrap:wrap">${SH[sh].map((x,i)=>`<div style="flex:1 1 45%">${inp('s'+i,x+' (m)',i<2?5:2)}</div>`).join('')}</div><div id="ox"></div></div>`;osu()}
+function osu(){const a=NV('s0'),b=NV('s1'),c=NV('s2'),d=NV('s3');let A,P=null;
+if(sh==='re'){A=a*b;P=2*(a+b)}else if(sh==='tr')A=a*b/2;else if(sh==='ce'){A=Math.PI*a*a;P=2*Math.PI*a}else if(sh==='tz')A=(a+b)/2*c;else{A=a*b-c*d;P=2*(a+b)}
+$('#ox').innerHTML=`<div style="margin-top:12px">${rs([['Surface',f(A)+' m²'],...(P!=null?[['Périmètre',f(P)+' m']]:[]),['En ares',f(A/100,4)+' a']])}</div>`}
+
+function aide(){$('#ov').innerHTML=`<div class="doc"><button class="btn sec" style="margin-top:0" onclick="$('#ov').style.display='none'">Fermer</button><h1>Aide</h1><dl><dt>Chantier</dt><dd>Choisissez la date, remplissez météo, effectifs, travaux et photos, réglez l’avancement, puis « Générer le rapport du jour » pour imprimer ou enregistrer en PDF.</dd><dt>Réserves</dt><dd>Prenez une photo, entourez le défaut au doigt, choisissez le lot et décrivez. Touchez le statut pour passer d’Ouverte à En cours puis Levée.</dd><dt>Métrés</dt><dd>Calculez béton, maçonnerie ou revêtement, ajoutez au DPGF, saisissez vos prix unitaires puis copiez pour Excel. Coefficient de vente et TVA modifiables.</dd><dt>Calculs</dt><dd>Structure : dalle, poutre, poteau, semelle. Escalier : nombre de marches, hauteur, giron (Blondel), béton. Blocs : nombre de blocs de 10, 15 ou 20 cm pour clôture ou chambre, avec ciment et sable. Fosse septique : volume, dimensions, puits perdu. Surfaces : rectangle, triangle, cercle, trapèze, L.</dd><dt>Bon à savoir</dt><dd>Les données restent sur votre téléphone (pas de synchronisation). Le bouton ◐ change le thème. Les résultats sont indicatifs.</dd></dl></div>`;$('#ov').style.display='block'}
+
+function cst(){$('#cv2').innerHTML=`<p class="warn">Aide au pré-dimensionnement sur le terrain. Ne remplace pas une note de calcul signée par un ingénieur habilité.</p>
+<h2>Dalle et poutre</h2><div class="card"><div class="row"><label>Portée (m)<input id="cl" type="number" step="any" value="5" oninput="cc2()"></label><label>Appuis<select id="ca" onchange="cc2()"><option value="i">Isostatique</option><option value="c">Continue</option></select></label></div><div id="o1"></div></div>
+<h2>Descente de charges</h2><div class="card"><div class="row"><label>Planchers<input id="dn" type="number" value="4" oninput="cc2()"></label><label>Surface reprise (m²)<input id="ds" type="number" step="any" value="25" oninput="cc2()"></label></div>
+<div class="row"><label>G plancher (kN/m²)<input id="dg" type="number" step="any" value="6.5" oninput="cc2()"></label><label>Usage (Q)<select id="dq" onchange="cc2()"><option value="1.5">Habitation 1,5</option><option value="2.5">Bureaux 2,5</option><option value="5">Commerces 5</option></select></label></div>
+<div class="row"><label>Béton fck (MPa)<select id="df" onchange="cc2()"><option>25</option><option>30</option><option>35</option></select></label><label>Contrainte sol (kPa)<input id="dsol" type="number" value="200" oninput="cc2()"></label></div><div id="o2" style="margin-top:12px;overflow-x:auto"></div></div>
+<p class="h">Combinaisons : ELU 1,35 G + 1,5 Q, ELS G + Q. Poids propre des poteaux : G majoré de 5 %. Pas de dégressivité de Q.</p>`;cc2()}
+function cc2(){const L=NV('cl'),iso=$('#ca').value==='i',hd=c5(L/(iso?25:30)),hp=c5(L/(iso?12:16)),bp=Math.max(.2,c5(.4*hp));
+$('#o1').innerHTML=`<p>Dalle pleine : épaisseur ≈ <b>${f(hd*100,0)} cm</b></p><p>Poutre : hauteur ≈ <b>${f(hp*100,0)} cm</b>, largeur ≈ <b>${f(bp*100,0)} cm</b></p>`;
+const n=Math.max(0,Math.floor(NV('dn'))),A0=NV('ds'),G=NV('dg'),Q=+$('#dq').value,fck=+$('#df').value,sg=NV('dsol');let rows='';
+for(let j=1;j<=n;j++){const g=j*A0*G*1.05,q=j*A0*Q;rows+=`<tr><td>${j}</td><td>${f(1.35*g+1.5*q,0)}</td><td>${f(g+q,0)}</td></tr>`}
+const g=n*A0*G*1.05,q=n*A0*Q,nu=1.35*g+1.5*q,ns=g+q,cp=Math.max(.2,c5(Math.sqrt(nu*1000/(.35*fck))/1000)),B=sg>0?c5(Math.sqrt(ns/sg)):0,hs=Math.max(.3,c5((B-cp)/4+.05));
+$('#o2').innerHTML=`<table class="t"><tr><th>Planchers repris</th><th>ELU (kN)</th><th>ELS (kN)</th></tr>${rows}</table><p>Poteau en pied : <b>${f(cp*100,0)} × ${f(cp*100,0)} cm</b></p><p>Semelle isolée : <b>${f(B*100,0)} × ${f(B*100,0)} cm</b>, hauteur ≈ <b>${f(hs*100,0)} cm</b></p>`}
+theme();render();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
