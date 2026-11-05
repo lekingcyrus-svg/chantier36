@@ -29,7 +29,7 @@ jobs:
           cp index.html sw.js manifest.webmanifest icon-192.png icon-512.png icon-maskable-192.png icon-maskable-512.png www/
           cp icon-only.png icon-foreground.png icon-background.png assets/
           npm init -y
-          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
+          npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/share@7 @capacitor/filesystem@7
           npm i -D @capacitor/assets
           npx cap init Chantier360 com.chantier360.app --web-dir www
           npx cap add android
