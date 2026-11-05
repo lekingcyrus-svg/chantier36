@@ -8,3 +8,4 @@ CHANTIER360 - APK construit automatiquement par GitHub
 4) Onglet Releases (colonne de droite du depot) : telecharger Chantier360.apk, l'ouvrir, autoriser les sources inconnues, installer.
 
 Chaque nouveau depot de fichier reconstruit l'APK. La signature est stable : on peut mettre a jour sans desinstaller.
+Premiere ouverture : creer un compte (nom, identifiant, mot de passe). Ensuite, identification a chaque ouverture (ou "Rester connecte").

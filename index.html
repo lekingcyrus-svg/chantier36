@@ -6,17 +6,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
-:root{--bg:#E9ECEE;--card:#fff;--ink:#1E2327;--mute:#5B666E;--line:#D0D6DA;--acc:#F2B705;--onacc:#1E2327;--ok:#2E7D32;--ko:#C62828;--mid:#B26A00;--head:#1E2327;--onhead:#F2B705;
+:root{--bg:#EEF4FC;--card:#fff;--ink:#0F2540;--mute:#53647D;--line:#C9D8EC;--acc:#1565C0;--onacc:#fff;--ok:#2E7D32;--ko:#C62828;--mid:#E65100;--head:#0D47A1;--onhead:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181B;--card:#1F252A;--ink:#EEF0F1;--mute:#9AA5AD;--line:#333B41;--ok:#66BB6A;--ko:#EF6C6C;--mid:#E8A33A}}
-:root[data-theme="dark"]{--bg:#14181B;--card:#1F252A;--ink:#EEF0F1;--mute:#9AA5AD;--line:#333B41;--ok:#66BB6A;--ko:#EF6C6C;--mid:#E8A33A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A1424;--card:#122238;--ink:#EAF1FB;--mute:#9DB2CC;--line:#27415F;--acc:#2F6FDB;--head:#0B2A5B;--ok:#66BB6A;--ko:#EF6C6C;--mid:#FFA040}}
+:root[data-theme="dark"]{--bg:#0A1424;--card:#122238;--ink:#EAF1FB;--mute:#9DB2CC;--line:#27415F;--acc:#2F6FDB;--head:#0B2A5B;--ok:#66BB6A;--ko:#EF6C6C;--mid:#FFA040}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--head);z-index:10}
 header{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;background:var(--head);color:var(--onhead);padding:10px 16px;font:700 22px "Barlow Condensed",Barlow,sans-serif;letter-spacing:.02em}
 header button{background:none;border:1px solid var(--onhead);color:var(--onhead);border-radius:8px;padding:6px;display:flex;align-items:center;line-height:0}
-.stripe{max-width:520px;margin:0 auto;height:8px;background:repeating-linear-gradient(-45deg,var(--acc) 0 12px,#1E2327 12px 24px)}
+.stripe{max-width:520px;margin:0 auto;height:4px;background:linear-gradient(90deg,var(--acc),#64B5F6)}
 #app{max-width:520px;margin:0 auto;padding:12px 14px 100px}
 h1{font:700 30px "Barlow Condensed",Barlow,sans-serif;margin:8px 0}
 h2{font:700 22px "Barlow Condensed",Barlow,sans-serif;margin:20px 0 8px}
@@ -48,10 +48,10 @@ table.t{border-collapse:collapse;width:100%;font-size:14px}
 .tot{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
 .tot b{font-variant-numeric:tabular-nums}.tot input{width:90px;margin:0;text-align:right}
 .big{font:700 24px "Barlow Condensed",sans-serif}
-.warn{border-left:5px solid var(--acc);padding:8px 12px;font-size:13px;color:var(--mute);background:var(--card);border-radius:0 8px 8px 0}
+.warn{border-left:5px solid var(--ko);padding:8px 12px;font-size:13px;color:var(--ink);background:rgba(198,40,40,.08);border-radius:0 8px 8px 0}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--head);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
 nav div{display:flex;width:100%;max-width:520px}
-nav button{flex:1;background:none;border:0;color:#B9C2C8;padding:8px 0;font:600 13px Barlow,sans-serif}
+nav button{flex:1;background:none;border:0;color:#BBD3F3;padding:8px 0;font:600 13px Barlow,sans-serif}
 nav button svg,.chips button svg{display:block;margin:0 auto 3px}.btn svg{vertical-align:-6px;margin-right:8px}nav button.on{color:var(--onhead)}
 #ov{display:none;position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 30px}
 #ov .doc{max-width:700px;margin:0 auto}
@@ -59,16 +59,25 @@ nav button svg,.chips button svg{display:block;margin:0 auto 3px}.btn svg{vertic
 #toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--head);color:var(--onhead);padding:10px 16px;border-radius:99px;z-index:50;display:none;font-weight:600}
 .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}.chips button{padding:8px 2px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:600 14px Barlow,sans-serif}.chips .on{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
 .ok{color:var(--ok)}.bad{color:var(--mid)}
+
+.err{display:none;color:var(--ko);font-weight:600;background:rgba(198,40,40,.08);border-left:5px solid var(--ko);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0 0;font-size:14px}
+.btn.dng{background:var(--ko);color:#fff;margin-top:10px}
+#lg{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(160deg,var(--head),var(--acc))}
+.lgc{width:100%;max-width:400px;margin:auto;background:var(--card);border-radius:16px;padding:22px 20px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.lgi{display:block;margin:0 auto;border-radius:18px}
+.lock header,.lock .stripe,.lock #app,.lock nav{display:none}
 @media print{body>*:not(#ov){display:none!important}#ov{position:static;overflow:visible;background:#fff;color:#000;padding:0;display:block}.noprint{display:none}}
 </style>
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1E2327"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"></head>
-<body>
-<header><span>Chantier360</span><span style="display:flex;gap:8px"><button onclick="aide()" aria-label="Aide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg></button><button onclick="tg()" aria-label="Changer de thème"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button></span></header>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0D47A1"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"></head>
+<body class="lock">
+<header><span>Chantier360</span><span style="display:flex;gap:8px"><button onclick="aide()" aria-label="Aide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg></button><button onclick="tg()" aria-label="Changer de thème"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button><button onclick="reg()" aria-label="Réglages"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button></span></header>
 <div class="stripe"></div>
+<div id="tr" style="max-width:520px;margin:0 auto;padding:0 14px"></div>
 <div id="app"></div>
 <nav><div id="nav"></div></nav>
 <div id="ov"></div>
 <div id="toast" role="status"></div>
+<div id="lg" role="dialog" aria-modal="true" aria-label="Identification"></div>
 <script>
 const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let S={reps:{},tasks:[{n:'Terrassement',p:0},{n:'Fondations',p:0},{n:'Élévation',p:0}],res:[],met:[],k:1.25,tva:18,theme:''};
@@ -84,7 +93,7 @@ function tg(){S.theme=document.documentElement.dataset.theme==='dark'||(!S.theme
 const IC={"ch": "<path d=\"M4 15a8 8 0 0 1 16 0\"/><path d=\"M2.5 15h19v3h-19z\"/><path d=\"M12 7v4\"/>", "re": "<path d=\"M5 21V4\"/><path d=\"M5 4h11l-2 4 2 4H5\"/>", "me": "<rect x=\"2.5\" y=\"8\" width=\"19\" height=\"8\" rx=\"1.5\"/><path d=\"M6 8v3M10 8v4M14 8v3M18 8v4\"/>", "ca": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><path d=\"M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01\"/>", "st": "<path d=\"M3 5h18\"/><path d=\"M6 5v15M18 5v15\"/><path d=\"M3 20h18\"/>", "es": "<path d=\"M3 20h5v-5h5v-5h5V5h3\"/>", "bl": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"1\"/><path d=\"M3 12h18M9 5v7M15 12v7\"/>", "fo": "<path d=\"M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z\"/><path d=\"M4 8l2-4h12l2 4\"/><path d=\"M8 14c1.5-1 2.5 1 4 0s2.5-1 4 0\"/>", "su": "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"1\"/><path d=\"M2 5v14M22 5v14\"/>", "cam": "<path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7\"/><path d=\"M12 17h.01\"/>", "theme": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 3a9 9 0 0 1 0 18z\" fill=\"currentColor\"/>"},ic=(n,z=24)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
 const T=[['ch','ch','Chantier'],['re','re','Réserves'],['me','me','Métrés'],['ca','ca','Calculs']];
 function go(t){tab=t;render()}
-function render(){$('#nav').innerHTML=T.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="go('${t[0]}')">${ic(t[1])}${t[2]}</button>`).join('');({ch,re,me,ca}[tab])();scrollTo(0,0)}
+function render0(){$('#nav').innerHTML=T.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="go('${t[0]}')">${ic(t[1])}${t[2]}</button>`).join('');({ch,re,me,ca}[tab])();scrollTo(0,0)}
 function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,720/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.55),c)};im.src=r.result};r.readAsDataURL(file)}
 
 /* Chantier */
@@ -104,7 +113,7 @@ $('#app').innerHTML=`<h1>Chantier</h1><div class="card"><label>Date du rapport<i
 function addPh(el){[...el.files].forEach(f=>shrink(f,d=>{R().photos.push(d);save();if(tab==='ch')ch()}))}
 function delPh(i){R().photos.splice(i,1);save();ch()}
 function addT(){const v=$('#nt').value.trim();if(v){S.tasks.push({n:v,p:0});save();ch()}}
-function ov(h){$('#ov').innerHTML=`<div class="doc"><div class="noprint" style="display:flex;gap:10px"><button class="btn" onclick="print()">Imprimer / PDF</button><button class="btn sec" onclick="$('#ov').style.display='none'">Fermer</button></div>${h}</div>`;$('#ov').style.display='block'}
+function ov(h){$('#ov').innerHTML=`<div class="doc"><div class="noprint" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" onclick="doPrint()">Imprimer</button><button class="btn" onclick="sharePdf()">PDF / Partager</button><button class="btn sec" onclick="$('#ov').style.display='none'">Fermer</button></div>${S.ent||S.chan?`<p class="h"><b>${esc(S.ent||'')}</b> ${esc(S.chan||'')}</p>`:''}${h}</div>`;$('#ov').style.display='block'}
 function rapport(){const r=R(),op=S.res.filter(x=>x.st!=='Levée');
 ov(`<h1>Rapport journalier</h1><p>${new Date(D+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p><dl><dt>Météo</dt><dd>${r.meteo}${r.intemp?`, intempérie : ${r.heures} h perdues`:''}</dd><dt>Effectifs</dt><dd>${r.eff} personne(s)</dd><dt>Travaux réalisés</dt><dd>${esc(r.travaux)||'Non renseigné'}</dd><dt>Incidents et observations</dt><dd>${esc(r.incid)||'Aucun'}</dd>
 <dt>Avancement</dt><dd>${S.tasks.map(t=>`${esc(t.n)} : ${t.p} %`).join('<br>')}</dd><dt>Réserves non levées</dt><dd>${op.length?op.map(x=>`RES-${String(x.id).padStart(3,'0')} ${esc(x.lot)} : ${esc(x.desc)}`).join('<br>'):'Aucune'}</dd></dl><div class="ph">${r.photos.map(p=>`<img src="${p}" alt="">`).join('')}</div>`)}
@@ -195,7 +204,98 @@ const n=Math.max(0,Math.floor(NV('dn'))),A0=NV('ds'),G=NV('dg'),Q=+$('#dq').valu
 for(let j=1;j<=n;j++){const g=j*A0*G*1.05,q=j*A0*Q;rows+=`<tr><td>${j}</td><td>${f(1.35*g+1.5*q,0)}</td><td>${f(g+q,0)}</td></tr>`}
 const g=n*A0*G*1.05,q=n*A0*Q,nu=1.35*g+1.5*q,ns=g+q,cp=Math.max(.2,c5(Math.sqrt(nu*1000/(.35*fck))/1000)),B=sg>0?c5(Math.sqrt(ns/sg)):0,hs=Math.max(.3,c5((B-cp)/4+.05));
 $('#o2').innerHTML=`<table class="t"><tr><th>Planchers repris</th><th>ELU (kN)</th><th>ELS (kN)</th></tr>${rows}</table><p>Poteau en pied : <b>${f(cp*100,0)} × ${f(cp*100,0)} cm</b></p><p>Semelle isolée : <b>${f(B*100,0)} × ${f(B*100,0)} cm</b>, hauteur ≈ <b>${f(hs*100,0)} cm</b></p>`}
-theme();render();
+/* Identification */
+const AK='c360u',SK='c360s';let bad=0,wait=0;
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function hsh(p,s){const te=new TextEncoder();
+try{if(window.crypto&&crypto.subtle){const k=await crypto.subtle.importKey('raw',te.encode(p),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:te.encode(s),iterations:150000,hash:'SHA-256'},k,256))}}catch(e){}
+let h=5381;const t=s+':'+p;for(let i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))>>>0;return 'x'+h.toString(16)}
+const getU=()=>{try{return JSON.parse(localStorage.getItem(AK)||'null')}catch(e){return null}};
+const lgErr=t=>{const e=$('#lge');if(e){e.textContent=t;e.style.display=t?'block':'none'}};
+function lgShell(inner){$('#lg').innerHTML=`<div class="lgc"><img src="icon-192.png" alt="" width="84" height="84" class="lgi"><h1 style="text-align:center;margin:6px 0 0">Chantier360</h1>${inner}</div>`;$('#lg').style.display='flex'}
+function sp(el){const t=el.checked?'text':'password';document.querySelectorAll('.pw').forEach(i=>i.type=t)}
+function showSetup(){lgShell(`<p class="h" style="text-align:center">Première connexion : créez votre compte pour protéger l’application sur cet appareil.</p>
+<form onsubmit="return lgSetup(event)" autocomplete="on"><label>Nom complet<input id="ln" autocomplete="name" required></label>
+<label>Identifiant<input id="li" autocomplete="username" autocapitalize="none" required></label>
+<label>Mot de passe (6 caractères minimum)<input id="lp" class="pw" type="password" autocomplete="new-password" required></label>
+<label>Confirmer le mot de passe<input id="lp2" class="pw" type="password" autocomplete="new-password" required></label>
+<label class="chk" style="margin-top:12px"><input type="checkbox" onchange="sp(this)">Afficher les mots de passe</label>
+<p id="lge" class="err" role="alert"></p><button class="btn" type="submit">Créer mon compte</button></form>`)}
+function showLogin(){const u=getU();lgShell(`<p class="h" style="text-align:center">Bonjour ${esc(u.nom)}, identifiez-vous pour continuer.</p>
+<form onsubmit="return lgLogin(event)" autocomplete="on"><label>Identifiant<input id="li" autocomplete="username" autocapitalize="none" required></label>
+<label>Mot de passe<input id="lp" class="pw" type="password" autocomplete="current-password" required></label>
+<label class="chk" style="margin-top:12px"><input type="checkbox" onchange="sp(this)">Afficher le mot de passe</label>
+<label class="chk" style="margin-top:8px"><input id="lr" type="checkbox">Rester connecté sur cet appareil</label>
+<p id="lge" class="err" role="alert"></p><button class="btn" type="submit">Se connecter</button></form>
+<button class="btn sec" onclick="lgForgot()">Mot de passe oublié ?</button>`)}
+function lgForgot(){lgErr('');const e=$('#lge');e.innerHTML='Le mot de passe ne peut pas être récupéré : il est stocké uniquement sur cet appareil. Pour recommencer, il faut effacer le compte <b>et toutes les données</b> (rapports, réserves, métrés). <button type="button" class="btn dng" onclick="lgReset()">Effacer le compte et les données</button>';e.style.display='block'}
+function lgReset(){if(confirm('Effacer le compte ET toutes les données de l’application ? Cette action est définitive.')){try{localStorage.clear();sessionStorage.clear()}catch(e){}location.reload()}}
+async function lgSetup(ev){ev.preventDefault();const nom=$('#ln').value.trim(),id=$('#li').value.trim(),p=$('#lp').value;
+if(id.length<3)return lgErr('L’identifiant doit contenir au moins 3 caractères.'),false;
+if(p.length<6)return lgErr('Le mot de passe doit contenir au moins 6 caractères.'),false;
+if(p!==$('#lp2').value)return lgErr('Les deux mots de passe ne correspondent pas.'),false;
+const salt=hex(crypto.getRandomValues(new Uint8Array(16)));
+try{localStorage.setItem(AK,JSON.stringify({nom,id:id.toLowerCase(),salt,h:await hsh(p,salt)}))}catch(e){return lgErr('Impossible d’enregistrer le compte (stockage plein).'),false}
+sessionStorage.setItem(SK,'1');unlock();return false}
+async function lgLogin(ev){ev.preventDefault();
+if(Date.now()<wait)return lgErr('Trop d’essais. Réessayez dans '+Math.ceil((wait-Date.now())/1000)+' s.'),false;
+const u=getU(),id=$('#li').value.trim().toLowerCase(),p=$('#lp').value;
+if(u&&id===u.id&&await hsh(p,u.salt)===u.h){bad=0;if($('#lr').checked)localStorage.setItem(SK,'1');else sessionStorage.setItem(SK,'1');unlock();return false}
+if(++bad>=5){bad=0;wait=Date.now()+30000;lgErr('Trop d’essais. Réessayez dans 30 s.')}else lgErr('Identifiant ou mot de passe incorrect.');
+$('#lp').value='';return false}
+function unlock(){document.body.classList.remove('lock');$('#lg').style.display='none';$('#lg').innerHTML='';initAcc().then(render)}
+function logout(){try{localStorage.removeItem(SK);sessionStorage.removeItem(SK)}catch(e){}$('#ov').style.display='none';document.body.classList.add('lock');showLogin()}
+function lockInit(){const u=getU();if(!u)return showSetup();if(localStorage.getItem(SK)||sessionStorage.getItem(SK))return unlock();showLogin()}
+
+/* Couleurs, partage, PDF, licence */
+const PAL=[['Bleu','#1565C0'],['Vert','#2E7D32'],['Orange','#E65100'],['Brique','#B23A2E'],['Violet','#6A3FB5'],['Ardoise','#37474F']];
+const PAY={prix:'1 500 FCFA',jours:7,momo:'',carte:'',wa:''};/* A REMPLIR : numero Mobile Money, lien de paiement par carte, numero WhatsApp (ex 22890000000) */
+const PUB={"kty":"EC","crv":"P-256","x":"krZottnvbXF88cjzC0WSFeGIhoZJYyLTC3pnl5PQnxA","y":"AKtSh7bdKtKOnBwIqqW2WXWc_MXe2M1d4hDTCeVSeow"};
+const mix=(h,k)=>'#'+[16,8,0].map(s=>Math.round(((parseInt(h.slice(1),16)>>s)&255)*k).toString(16).padStart(2,'0')).join('');
+function applyCol(){const r=document.documentElement.style;if(S.col){r.setProperty('--acc',S.col);r.setProperty('--head',mix(S.col,.7))}else{r.removeProperty('--acc');r.removeProperty('--head')}}
+function setCol(v){S.col=v;save();applyCol();reg()}
+function setPap(){let e=$('#pgs');if(!e){e=document.createElement('style');e.id='pgs';document.head.appendChild(e)}e.textContent='@page{size:'+(S.pap==='letter'?'letter':'A4')+';margin:12mm}'}
+const nat=()=>window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform();
+async function shareFile(name,mime,b64,title){try{if(nat()){const P=Capacitor.Plugins,r=await P.Filesystem.writeFile({path:name,data:b64,directory:'CACHE'});await P.Share.share({title,files:[r.uri],dialogTitle:title});return}
+const bin=atob(b64),u=Uint8Array.from(bin,c=>c.charCodeAt(0)),file=new File([u],name,{type:mime});
+if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title});return}
+const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;a.click()}catch(e){if(e&&e.name!=='AbortError')msg('Partage impossible.')}}
+function expData(){shareFile('chantier360-sauvegarde-'+today()+'.json','application/json',btoa(unescape(encodeURIComponent(JSON.stringify(S)))),'Sauvegarde Chantier360')}
+function impData(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o||!Array.isArray(o.res))throw 0;if(confirm('Remplacer les données actuelles par cette sauvegarde ?')){Object.assign(S,o);save();applyCol();setPap();$('#ov').style.display='none';render();msg('Sauvegarde importée.')}}catch(e){msg('Fichier invalide.')}})}
+const WA={8217:146,339:156,8211:150,8212:151,8220:147,8221:148,8230:133,8364:128,8239:32,160:32};
+const hx=s=>[...s].map(c=>{let n=c.charCodeAt(0);n=WA[n]||(n<256?n:63);return n.toString(16).padStart(2,'0')}).join('');
+function mkPdf(title,lines){const L=S.pap==='letter',W=L?612:595,H=L?792:842,M=48,ac=S.col||'#1565C0',c=[1,3,5].map(i=>(parseInt(ac.slice(i,i+2),16)/255).toFixed(3)).join(' '),pg=[];let o='',y=0;
+const np=()=>{if(o)pg.push(o);o=`${c} rg 0 ${H-54} ${W} 54 re f 1 1 1 rg BT /F2 16 Tf ${M} ${H-30} Td <${hx(title)}> Tj ET BT /F1 9 Tf ${M} ${H-45} Td <${hx([S.ent,S.chan].filter(Boolean).join(' - ')||'Chantier360')}> Tj ET 0 g\n`;y=H-84};np();
+for(const raw of lines){const ws=raw.trim().split(' '),mx=Math.floor((W-2*M)/5.3),out=[];let ln='';for(const w of ws){if((ln+' '+w).length>mx&&ln){out.push(ln);ln=w}else ln=ln?ln+' '+w:w}out.push(ln);
+for(const l of out){if(y<M+20)np();o+=`BT /F1 10 Tf ${M} ${y} Td <${hx(l)}> Tj ET\n`;y-=14}}
+pg.push(o);const ob=[],kids=[];ob[1]='<</Type/Catalog/Pages 2 0 R>>';ob[3]='<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>';ob[4]='<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>';
+pg.forEach((s,i)=>{const a=5+i*2;kids.push(a+' 0 R');s+=`BT /F1 8 Tf ${W-M-40} 24 Td <${hx('Page '+(i+1)+'/'+pg.length)}> Tj ET`;ob[a]=`<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${W} ${H}]/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents ${a+1} 0 R>>`;ob[a+1]=`<</Length ${s.length}>>\nstream\n${s}\nendstream`});
+ob[2]=`<</Type/Pages/Kids[${kids.join(' ')}]/Count ${pg.length}>>`;let out='%PDF-1.4\n';const xr=[];for(let i=1;i<ob.length;i++){xr[i]=out.length;out+=`${i} 0 obj\n${ob[i]}\nendobj\n`}
+const x=out.length;out+=`xref\n0 ${ob.length}\n0000000000 65535 f \n`+xr.slice(1).map(p=>String(p).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<</Size ${ob.length}/Root 1 0 R>>\nstartxref\n${x}\n%%EOF`;return btoa(out)}
+function sharePdf(){const t=$('#ov .doc').innerText.split('\n').map(s=>s.trim()).filter(s=>!/^(Imprimer|PDF \/ Partager|Fermer)$/.test(s)),i=t.findIndex(Boolean),ti=t[i]||'Document';shareFile('Chantier360-'+D+'.pdf','application/pdf',mkPdf(ti,t.slice(i+1)),ti)}
+function doPrint(){if(nat()){msg('Dans le menu, choisissez Imprimer.');sharePdf()}else print()}
+const b64u=a=>btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),unb=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+const ymd=()=>new Date().toISOString().slice(0,10).replace(/-/g,''),fmtD=e=>e.slice(6)+'/'+e.slice(4,6)+'/'+e.slice(0,4);let LIC=null;
+function dev(){let d=localStorage.getItem('c360d');if(!d){d=b64u(crypto.getRandomValues(new Uint8Array(6)));localStorage.setItem('c360d',d)}return d}
+async function chkLic(code){try{const[p,s]=code.trim().split('.'),k=await crypto.subtle.importKey('jwk',PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);if(!await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},k,unb(s),unb(p)))return null;const[d,e]=new TextDecoder().decode(unb(p)).split('|');return d===dev()?{d,e}:null}catch(e){return null}}
+async function initAcc(){LIC=null;const c=localStorage.getItem('c360l');if(c){const r=await chkLic(c);if(r&&(r.e==='0'||r.e>=ymd()))LIC=r}}
+function trial(){let t=null;try{t=JSON.parse(localStorage.getItem('c360t')||'null')}catch(e){}const n=Date.now();if(!t)t={t0:n,last:n};t.last=Math.max(t.last,n);try{localStorage.setItem('c360t',JSON.stringify(t))}catch(e){}return Math.ceil(PAY.jours-(t.last-t.t0)/864e5)}
+const access=()=>!!LIC||trial()>0;
+async function actCode(){const c=($('#ac').value||'').trim(),r=await chkLic(c);if(r&&(r.e==='0'||r.e>=ymd())){localStorage.setItem('c360l',c);$('#ov').style.display='none';unlock();msg('Licence activée.')}else{lgErr('Code invalide, expiré ou prévu pour un autre appareil.');msg('Code invalide.')}}
+function paywall(){lgShell(`<h2 style="text-align:center;margin:8px 0">Période d’essai terminée</h2><p class="err" style="display:block">Votre essai gratuit de ${PAY.jours} jours est terminé. Pour continuer, un abonnement de <b>${PAY.prix}</b> est nécessaire.</p>
+<h2>1. Payer</h2><p>${PAY.momo?'Mobile Money : <b>'+esc(PAY.momo)+'</b>':'Mobile Money : numéro à demander au support.'}</p>${PAY.carte?`<button class="btn" onclick="open('${PAY.carte}','_blank')">Payer par carte</button>`:''}
+<h2>2. Envoyer la preuve</h2><p class="h">Indiquez votre identifiant appareil : <b>${dev()}</b></p>${PAY.wa?`<button class="btn sec" onclick="open('https://wa.me/${PAY.wa}?text='+encodeURIComponent('Paiement Chantier360, appareil ${dev()}'),'_blank')">Envoyer par WhatsApp</button>`:''}
+<h2>3. Saisir le code reçu</h2><label>Code d’activation<input id="ac" autocapitalize="none"></label><p id="lge" class="err" role="alert"></p><button class="btn" onclick="actCode()">Activer</button>
+<button class="btn sec" onclick="expData()">Sauvegarder mes données</button><button class="btn sec" onclick="logout()">Se déconnecter</button>`)}
+function render0(){if(!access()){document.body.classList.add('lock');return paywall()}render0();const d=trial();$('#tr').innerHTML=LIC?'':`<p class="warn" style="${d>2?'border-color:var(--acc);background:rgba(21,101,192,.08)':''}">Essai gratuit : <b>${d}</b> jour(s) restant(s). <a href="#" onclick="reg();return false" style="color:var(--acc);font-weight:700">Activer</a></p>`}
+function reg(){const d=trial();$('#ov').innerHTML=`<div class="doc"><button class="btn sec" style="margin-top:0" onclick="$('#ov').style.display='none'">Fermer</button><h1>Réglages</h1>
+<h2>Couleurs</h2><div class="card"><div class="chips">${PAL.map(p=>`<button onclick="setCol('${p[1]}')" style="border-left:8px solid ${p[1]}">${p[0]}</button>`).join('')}</div><label>Couleur personnalisée<input type="color" value="${S.col||'#1565C0'}" onchange="setCol(this.value)" style="height:46px;padding:2px"></label><button class="btn sec" onclick="setCol('')">Couleurs d’origine</button></div>
+<h2>Documents et impression</h2><div class="card"><label>Entreprise<input value="${esc(S.ent||'')}" oninput="S.ent=this.value;save()"></label><label>Chantier<input value="${esc(S.chan||'')}" oninput="S.chan=this.value;save()"></label><label>Papier<select onchange="S.pap=this.value;save();setPap()"><option value="a4">A4</option><option value="letter" ${S.pap==='letter'?'selected':''}>Letter</option></select></label><p class="h">Ces informations apparaissent en en-tête des rapports, impressions et PDF.</p></div>
+<h2>Partage de données</h2><div class="card"><button class="btn" style="margin-top:0" onclick="expData()">Partager une sauvegarde</button><label class="btn sec">Importer une sauvegarde<input type="file" accept=".json,application/json" hidden onchange="impData(this)"></label></div>
+<h2>Licence</h2><div class="card">${LIC?'<p class="ok"><b>Licence active</b>'+(LIC.e==='0'?'':' jusqu’au '+fmtD(LIC.e))+'</p>':`<p>Essai gratuit : <b>${d}</b> jour(s) restant(s).</p>`}<p class="h">Identifiant appareil : <b>${dev()}</b></p>${LIC?'':'<label>Code d’activation<input id="ac" autocapitalize="none"></label><button class="btn" onclick="actCode()">Activer</button>'}</div>
+<button class="btn dng" onclick="logout()">Se déconnecter</button></div>`;$('#ov').style.display='block'}
+
+theme();applyCol();setPap();lockInit();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
