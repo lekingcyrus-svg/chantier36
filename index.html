@@ -99,7 +99,7 @@ function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Ima
 
 /* Chantier */
 function ch(){const r=R();
-$('#app').innerHTML=`<h1>Chantier</h1><div class="card"><label>Date du rapport<input type="date" value="${D}" onchange="D=this.value||today();ch()"></label>
+$('#app').innerHTML=`<h1>Chantier</h1>${dash()}<div class="card"><label>Date du rapport<input type="date" value="${D}" onchange="D=this.value||today();ch()"></label>
 <div class="row"><label>Météo<select onchange="R().meteo=this.value;save()">${['Ensoleillé','Nuageux','Pluie','Vent fort','Gel','Canicule'].map(m=>`<option ${m===r.meteo?'selected':''}>${m}</option>`).join('')}</select></label>
 <label>Effectifs<input type="number" inputmode="numeric" min="0" value="${r.eff}" oninput="R().eff=+this.value;save()"></label></div>
 <label class="chk"><input type="checkbox" ${r.intemp?'checked':''} onchange="R().intemp=this.checked;save()">Intempérie : travaux arrêtés</label>
@@ -849,6 +849,27 @@ const ti=di(X);if(ti>=0&&ti<nd)pg.L(gx+(ti+.5)*cd,yb2,gx+(ti+.5)*cd,yh+rh,{col:'
 pg.T(m,m+6,'Barre claire : planifié. Barre foncée : réalisé (rouge si en retard). Pointillé orange : aujourd’hui. Jours ouvrés : '+(S.dim?'lundi au dimanche':'lundi au samedi')+'.',7.5,{col:'#555555'});pg.T(W-m,m+6,'Page '+(pi+1)+'/'+chunks.length,7.5,{a:'r',col:'#555555'})});
 return pages}
 function pnPdf(){shareFile('Planning-'+PM+'.pdf','application/pdf',buildPdf(planningPages()),'Planning')}
+
+/* ===== Lot 1 : tableau de bord, recherche globale, journal d'activité ===== */
+function logA(t){S.log=S.log||[];S.log.push({t:Date.now(),a:t});if(S.log.length>150)S.log=S.log.slice(-150);save()}
+(function(){[['addX',()=>LN.length,n=>`DPGF : ${n} ligne(s) ajoutée(s)`],['saveR',()=>S.res.length,n=>S.res.length>n?'Réserve ajoutée':''],['pnAdd',()=>S.tasks.length,n=>S.tasks.length>n?'Tâche ajoutée au planning':''],['plTD',()=>S.tasks.length,n=>S.tasks.length<n?'Tâche supprimée du planning':''],['plAdd',()=>0,()=>'Élément ajouté au dossier de plans'],['plPdf',()=>0,()=>'Plan PDF généré'],['plDossier',()=>0,()=>'Dossier de plans PDF généré'],['devisPdf',()=>0,()=>'Devis PDF généré'],['pnPdf',()=>0,()=>'Planning PDF généré'],['expData',()=>0,()=>'Sauvegarde exportée']].forEach(([n,pre,lab])=>{const o=window[n];if(typeof o!=='function')return;window[n]=function(...a){const p=pre(),r=o.apply(this,a),l=lab(p);if(l)logA(l);return r}})})();
+const nz=s=>String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function gsr(q){const el=$('#gsr');if(!el)return;q=nz(q.trim());if(q.length<2){el.innerHTML='';return}const R_=[],add=(k,t,sub,act)=>{if(R_.length<25)R_.push(`<div class="tot" style="cursor:pointer;gap:8px" onclick="${act}"><span><b>${esc(k)}</b> ${esc(t)}<br><span class="h">${esc(sub)}</span></span></div>`)};
+S.res.forEach(x=>{if(nz(`res-${String(x.id).padStart(3,'0')} ${x.desc} ${x.lot} ${x.resp}`).includes(q))add('Réserve',`RES-${String(x.id).padStart(3,'0')} ${String(x.desc||'').slice(0,60)}`,`${x.lot}, ${x.st}`,"go('re')")});
+S.met.forEach(m=>{if(nz(m.d).includes(q))add('Métré',String(m.d).slice(0,70),`${f(m.q,2)} ${m.u}`,"go('me')")});
+S.tasks.forEach(t=>{if(nz(t.n).includes(q))add('Tâche',t.n,`${t.p||0} %${t.s?', '+fd(t.s)+' au '+fd(t.e):''}`,"go('pn')")});
+Object.keys(S.reps).sort().reverse().forEach(d=>{const r=S.reps[d];if(nz(`${r.travaux} ${r.incid} ${r.meteo}`).includes(q))add('Rapport',fd(d),String(r.travaux||r.incid||'').slice(0,70),`D='${d}';go('ch')`)});
+(S.plans||[]).forEach(it=>{const K=KK(it);if(!K.err&&nz(`${K.titre} ${K.sous} ${K.nom}`).includes(q))add('Plan',K.titre,K.sous,`pt='${it.t}';cs='pl';go('ca')`)});
+el.innerHTML=R_.length?R_.join(''):'<p class="h">Aucun résultat.</p>'}
+function dash(){const X=today(),k=+S.k||1,ht=S.met.reduce((s,m)=>s+m.q*m.pu*k,0),ttc=ht*(1+(+S.tva||0)/100),dated=S.tasks.filter(t=>t.s&&t.e),late=dated.filter(t=>stat(t,X).k==='ko').length,avg=S.tasks.length?Math.round(S.tasks.reduce((s,t)=>s+(+t.p||0),0)/S.tasks.length):0,
+open=S.res.filter(x=>x.st!=='Levée').length,mo=X.slice(0,7),ents=Object.entries(S.reps).filter(([d])=>d.startsWith(mo)),rm=ents.filter(([d,r])=>r.travaux||r.eff>0).length,hp=ents.reduce((s,[d,r])=>s+(+r.heures||0),0),sz=new Blob([JSON.stringify(S)]).size,pct=Math.round(sz/5e6*100),
+tile=(l,v,bad)=>`<div style="flex:1 1 44%;border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0"><div class="h" style="margin:0">${l}</div><div style="font-size:20px;font-weight:700;${bad?'color:var(--ko)':''}">${v}</div></div>`,
+lg=(S.log||[]).slice(-8).reverse().map(e=>`<p class="h" style="margin:3px 0">${new Date(e.t).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} : ${esc(e.a)}</p>`).join('');
+return `<div class="card"><h2 style="margin-top:0">Tableau de bord</h2><label>Recherche dans le projet<input id="gs" type="search" placeholder="Réserve, métré, tâche, rapport, plan…" oninput="gsr(this.value)"></label><div id="gsr"></div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">${tile('Budget TTC',f(ttc,0)+' FCFA')}${tile('Avancement moyen',avg+' %')}${tile('Tâches en retard',late,late>0)}${tile('Réserves à lever',open,open>0)}${tile('Rapports ce mois',rm)}${tile('Heures perdues ce mois',f(hp,1)+' h')}</div>
+<div style="margin-top:12px"><div class="tot"><span>Stockage local</span><b>${f(sz/1e6,2)} Mo (${pct} %)</b></div><div class="bar ${pct>80?'ko':''}"><i style="width:${Math.min(100,pct)}%"></i></div>${pct>80?'<p class="h bad" style="font-weight:600">Stockage presque plein : exportez une sauvegarde (Réglages) et supprimez des photos.</p>':'<p class="h">Capacité approximative du navigateur : 5 Mo. Les photos sont les plus lourdes.</p>'}</div>
+${lg?`<details style="margin-top:8px"><summary style="cursor:pointer;font-weight:600">Activité récente</summary>${lg}</details>`:''}</div>`}
+if(!S.v){S.v=1;S.log=S.log||[];save()}
 
 theme();applyCol();setPap();lockInit();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
