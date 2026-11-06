@@ -66,6 +66,7 @@ nav button svg,.chips button svg{display:block;margin:0 auto 3px}.btn svg{vertic
 .lgc{width:100%;max-width:400px;margin:auto;background:var(--card);border-radius:16px;padding:22px 20px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
 .lgi{display:block;margin:0 auto;border-radius:18px}
 .lock header,.lock .stripe,.lock #app,.lock nav{display:none}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:2px 0 8px}.bar i{display:block;height:100%;background:var(--acc)}.bar.ko i{background:var(--ko)}
 @media print{body>*:not(#ov){display:none!important}#ov{position:static;overflow:visible;background:#fff;color:#000;padding:0;display:block}.noprint{display:none}}
 </style>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0D47A1"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"></head>
@@ -91,9 +92,9 @@ function msg(t){const e=$('#toast');e.textContent=t;e.style.display='block';clea
 function theme(){if(S.theme)document.documentElement.dataset.theme=S.theme;else delete document.documentElement.dataset.theme}
 function tg(){S.theme=document.documentElement.dataset.theme==='dark'||(!S.theme&&matchMedia('(prefers-color-scheme:dark)').matches)?'light':'dark';theme();save()}
 const IC={"ch": "<path d=\"M4 15a8 8 0 0 1 16 0\"/><path d=\"M2.5 15h19v3h-19z\"/><path d=\"M12 7v4\"/>", "re": "<path d=\"M5 21V4\"/><path d=\"M5 4h11l-2 4 2 4H5\"/>", "me": "<rect x=\"2.5\" y=\"8\" width=\"19\" height=\"8\" rx=\"1.5\"/><path d=\"M6 8v3M10 8v4M14 8v3M18 8v4\"/>", "ca": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><path d=\"M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01\"/>", "st": "<path d=\"M3 5h18\"/><path d=\"M6 5v15M18 5v15\"/><path d=\"M3 20h18\"/>", "es": "<path d=\"M3 20h5v-5h5v-5h5V5h3\"/>", "bl": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"1\"/><path d=\"M3 12h18M9 5v7M15 12v7\"/>", "fo": "<path d=\"M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z\"/><path d=\"M4 8l2-4h12l2 4\"/><path d=\"M8 14c1.5-1 2.5 1 4 0s2.5-1 4 0\"/>", "su": "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"1\"/><path d=\"M2 5v14M22 5v14\"/>", "cam": "<path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7\"/><path d=\"M12 17h.01\"/>", "theme": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 3a9 9 0 0 1 0 18z\" fill=\"currentColor\"/>"},ic=(n,z=24)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
-const T=[['ch','ch','Chantier'],['re','re','Réserves'],['me','me','Métrés'],['ca','ca','Calculs']];
+const T=[['ch','ch','Chantier'],['pn','pn','Planning'],['re','re','Réserves'],['me','me','Métrés'],['ca','ca','Calculs']];
 function go(t){tab=t;render()}
-function render0(){$('#nav').innerHTML=T.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="go('${t[0]}')">${ic(t[1])}${t[2]}</button>`).join('');({ch,re,me,ca}[tab])();scrollTo(0,0)}
+function render0(){$('#nav').innerHTML=T.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="go('${t[0]}')">${ic(t[1])}${t[2]}</button>`).join('');({ch,pn:pnv,re,me,ca}[tab])();scrollTo(0,0)}
 function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,720/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.55),c)};im.src=r.result};r.readAsDataURL(file)}
 
 /* Chantier */
@@ -107,7 +108,7 @@ $('#app').innerHTML=`<h1>Chantier</h1><div class="card"><label>Date du rapport<i
 <label>Incidents et observations<textarea rows="2" oninput="R().incid=this.value;save()">${esc(r.incid)}</textarea></label>
 <label class="btn sec">${ic('cam',20)}Ajouter des photos<input type="file" accept="image/*" capture="environment" multiple hidden onchange="addPh(this)"></label>
 <div class="ph">${r.photos.map((p,i)=>`<img src="${p}" alt="Photo ${i+1}" onclick="delPh(${i})">`).join('')}</div>${r.photos.length?'<p class="h">Touchez une photo pour la supprimer.</p>':''}</div>
-<h2>Avancement</h2><div class="card">${S.tasks.map((t,i)=>`<div class="tk"><span>${esc(t.n)}</span><b id="p${i}">${t.p} %</b><input type="range" min="0" max="100" step="5" value="${t.p}" aria-label="Avancement ${esc(t.n)}" oninput="S.tasks[${i}].p=+this.value;$('#p${i}').textContent=this.value+' %';save()"></div>`).join('')}
+<h2>Avancement</h2><div class="card">${S.tasks.map((t,i)=>`<div class="tk"><span>${esc(t.n)}${plTag(t)}</span><b id="p${i}">${t.p} %</b><input type="range" min="0" max="100" step="5" value="${t.p}" aria-label="Avancement ${esc(t.n)}" oninput="S.tasks[${i}].p=+this.value;$('#p${i}').textContent=this.value+' %';S.tasks[${i}].u=D;save()"></div>`).join('')}
 <div class="row"><label>Nouvelle tâche<input id="nt"></label><button class="btn sec" style="width:auto;padding:11px 16px" onclick="addT()">Ajouter</button></div></div>
 <button class="btn" onclick="rapport()">Générer le rapport du jour</button>`}
 function addPh(el){[...el.files].forEach(f=>shrink(f,d=>{R().photos.push(d);save();if(tab==='ch')ch()}))}
@@ -116,7 +117,7 @@ function addT(){const v=$('#nt').value.trim();if(v){S.tasks.push({n:v,p:0});save
 function ov(h){$('#ov').innerHTML=`<div class="doc"><div class="noprint" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" onclick="doPrint()">Imprimer</button><button class="btn" onclick="sharePdf()">PDF / Partager</button><button class="btn sec" onclick="$('#ov').style.display='none'">Fermer</button></div>${S.ent||S.chan?`<p class="h"><b>${esc(S.ent||'')}</b> ${esc(S.chan||'')}</p>`:''}${h}</div>`;$('#ov').style.display='block'}
 function rapport(){const r=R(),op=S.res.filter(x=>x.st!=='Levée');
 ov(`<h1>Rapport journalier</h1><p>${new Date(D+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p><dl><dt>Météo</dt><dd>${r.meteo}${r.intemp?`, intempérie : ${r.heures} h perdues`:''}</dd><dt>Effectifs</dt><dd>${r.eff} personne(s)</dd><dt>Travaux réalisés</dt><dd>${esc(r.travaux)||'Non renseigné'}</dd><dt>Incidents et observations</dt><dd>${esc(r.incid)||'Aucun'}</dd>
-<dt>Avancement</dt><dd>${S.tasks.map(t=>`${esc(t.n)} : ${t.p} %`).join('<br>')}</dd><dt>Réserves non levées</dt><dd>${op.length?op.map(x=>`RES-${String(x.id).padStart(3,'0')} ${esc(x.lot)} : ${esc(x.desc)}`).join('<br>'):'Aucune'}</dd></dl><div class="ph">${r.photos.map(p=>`<img src="${p}" alt="">`).join('')}</div>`)}
+<dt>Avancement</dt><dd>${S.tasks.map(t=>`${esc(t.n)} : ${t.p} %${plTxt(t)}`).join('<br>')}</dd><dt>Réserves non levées</dt><dd>${op.length?op.map(x=>`RES-${String(x.id).padStart(3,'0')} ${esc(x.lot)} : ${esc(x.desc)}`).join('<br>'):'Aucune'}</dd></dl><div class="ph">${r.photos.map(p=>`<img src="${p}" alt="">`).join('')}</div>`)}
 
 /* Réserves */
 function re(){ph=0;
@@ -190,7 +191,7 @@ function osu(){const a=NV('s0'),b=NV('s1'),c=NV('s2'),d=NV('s3');let A,P=null;
 if(sh==='re'){A=a*b;P=2*(a+b)}else if(sh==='tr')A=a*b/2;else if(sh==='ce'){A=Math.PI*a*a;P=2*Math.PI*a}else if(sh==='tz')A=(a+b)/2*c;else{A=a*b-c*d;P=2*(a+b)}
 $('#ox').innerHTML=`<div style="margin-top:12px">${rs([['Surface',f(A)+' m²'],...(P!=null?[['Périmètre',f(P)+' m']]:[]),['En ares',f(A/100,4)+' a']])}</div>`}
 
-function aide(){$('#ov').innerHTML=`<div class="doc"><button class="btn sec" style="margin-top:0" onclick="$('#ov').style.display='none'">Fermer</button><h1>Aide</h1><dl><dt>Chantier</dt><dd>Choisissez la date, remplissez météo, effectifs, travaux et photos, réglez l’avancement, puis « Générer le rapport du jour » pour imprimer ou enregistrer en PDF.</dd><dt>Réserves</dt><dd>Prenez une photo, entourez le défaut au doigt, choisissez le lot et décrivez. Touchez le statut pour passer d’Ouverte à En cours puis Levée.</dd><dt>Métrés</dt><dd>Calculez béton, maçonnerie ou revêtement, ajoutez au DPGF, saisissez vos prix unitaires, puis générez le devis en PDF à partager ou copiez pour Excel. Coefficient de vente et TVA modifiables.</dd><dt>Calculs</dt><dd>Structure : dalle, poutre, poteau, semelle. Escalier : nombre de marches, hauteur, giron (Blondel), béton. Blocs : nombre de blocs de 10, 15 ou 20 cm pour clôture ou chambre, avec ciment et sable. Fosse septique : volume, dimensions, puits perdu. Surfaces : rectangle, triangle, cercle, trapèze, L. Plans BA : poteau, poutre ou semelle, saisissez dimensions, enrobage et aciers pour obtenir le plan de coffrage et de ferraillage en PDF avec nomenclature, ou un dossier complet. Dosage, carrelage, peinture et enduit, toiture, terrassement, plancher à poutrelles et hourdis, acier : quantités ajoutables au DPGF.</dd><dt>Bon à savoir</dt><dd>Les données restent sur votre téléphone (pas de synchronisation). Le bouton ◐ change le thème. Les résultats sont indicatifs.</dd></dl></div>`;$('#ov').style.display='block'}
+function aide(){$('#ov').innerHTML=`<div class="doc"><button class="btn sec" style="margin-top:0" onclick="$('#ov').style.display='none'">Fermer</button><h1>Aide</h1><dl><dt>Chantier</dt><dd>Choisissez la date, remplissez météo, effectifs, travaux et photos, réglez l’avancement, puis « Générer le rapport du jour » pour imprimer ou enregistrer en PDF.</dd><dt>Réserves</dt><dd>Prenez une photo, entourez le défaut au doigt, choisissez le lot et décrivez. Touchez le statut pour passer d’Ouverte à En cours puis Levée.</dd><dt>Planning</dt><dd>Planifiez vos tâches avec dates de début et de fin, suivez le prévu et le réalisé du mois, voyez le diagramme et les rapports journaliers, puis partagez le planning en PDF.</dd><dt>Métrés</dt><dd>Calculez béton, maçonnerie ou revêtement, ajoutez au DPGF, saisissez vos prix unitaires, puis générez le devis en PDF à partager ou copiez pour Excel. Coefficient de vente et TVA modifiables.</dd><dt>Calculs</dt><dd>Structure : dalle, poutre, poteau, semelle. Escalier : nombre de marches, hauteur, giron (Blondel), béton. Blocs : nombre de blocs de 10, 15 ou 20 cm pour clôture ou chambre, avec ciment et sable. Fosse septique : volume, dimensions, puits perdu. Surfaces : rectangle, triangle, cercle, trapèze, L. Plans BA : poteau, poutre (isostatique, continue sur plusieurs appuis ou console), semelle, longrine, dalle pleine, voile ou mur de soutènement (avec bêche) et vérification de stabilité, saisissez dimensions, enrobage et aciers pour obtenir le plan de coffrage et de ferraillage en PDF avec nomenclature, ou un dossier complet. Dosage, carrelage, peinture et enduit, toiture, terrassement, plancher à poutrelles et hourdis, acier : quantités ajoutables au DPGF.</dd><dt>Bon à savoir</dt><dd>Les données restent sur votre téléphone (pas de synchronisation). Le bouton ◐ change le thème. Les résultats sont indicatifs.</dd></dl></div>`;$('#ov').style.display='block'}
 
 function cst(){$('#cv2').innerHTML=`<p class="warn">Aide au pré-dimensionnement sur le terrain. Ne remplace pas une note de calcul signée par un ingénieur habilité.</p>
 <h2>Dalle et poutre</h2><div class="card"><div class="row"><label>Portée (m)<input id="cl" type="number" step="any" value="5" oninput="cc2()"></label><label>Appuis<select id="ca" onchange="cc2()"><option value="i">Isostatique</option><option value="c">Continue</option></select></label></div><div id="o1"></div></div>
@@ -243,14 +244,12 @@ const u=getU(),id=$('#li').value.trim().toLowerCase(),p=$('#lp').value;
 if(u&&id===u.id&&await hsh(p,u.salt)===u.h){bad=0;if($('#lr').checked)localStorage.setItem(SK,'1');else sessionStorage.setItem(SK,'1');unlock();return false}
 if(++bad>=5){bad=0;wait=Date.now()+30000;lgErr('Trop d’essais. Réessayez dans 30 s.')}else lgErr('Identifiant ou mot de passe incorrect.');
 $('#lp').value='';return false}
-function unlock(){document.body.classList.remove('lock');$('#lg').style.display='none';$('#lg').innerHTML='';initAcc().then(render)}
+function unlock(){document.body.classList.remove('lock');$('#lg').style.display='none';$('#lg').innerHTML='';render()}
 function logout(){try{localStorage.removeItem(SK);sessionStorage.removeItem(SK)}catch(e){}$('#ov').style.display='none';document.body.classList.add('lock');showLogin()}
 function lockInit(){const u=getU();if(!u)return showSetup();if(localStorage.getItem(SK)||sessionStorage.getItem(SK))return unlock();showLogin()}
 
-/* Couleurs, partage, PDF, licence */
+/* Couleurs, partage, PDF */
 const PAL=[['Bleu','#1565C0'],['Vert','#2E7D32'],['Orange','#E65100'],['Brique','#B23A2E'],['Violet','#6A3FB5'],['Ardoise','#37474F']];
-const PAY={prix:'1 500 FCFA',jours:7,momo:'',carte:'',wa:''};/* A REMPLIR : numero Mobile Money, lien de paiement par carte, numero WhatsApp (ex 22890000000) */
-const PUB={"kty":"EC","crv":"P-256","x":"krZottnvbXF88cjzC0WSFeGIhoZJYyLTC3pnl5PQnxA","y":"AKtSh7bdKtKOnBwIqqW2WXWc_MXe2M1d4hDTCeVSeow"};
 const mix=(h,k)=>'#'+[16,8,0].map(s=>Math.round(((parseInt(h.slice(1),16)>>s)&255)*k).toString(16).padStart(2,'0')).join('');
 function applyCol(){const r=document.documentElement.style;if(S.col){r.setProperty('--acc',S.col);r.setProperty('--head',mix(S.col,.7))}else{r.removeProperty('--acc');r.removeProperty('--head')}}
 function setCol(v){S.col=v;save();applyCol();reg()}
@@ -274,25 +273,12 @@ ob[2]=`<</Type/Pages/Kids[${kids.join(' ')}]/Count ${pg.length}>>`;let out='%PDF
 const x=out.length;out+=`xref\n0 ${ob.length}\n0000000000 65535 f \n`+xr.slice(1).map(p=>String(p).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<</Size ${ob.length}/Root 1 0 R>>\nstartxref\n${x}\n%%EOF`;return btoa(out)}
 function sharePdf(){const t=$('#ov .doc').innerText.split('\n').map(s=>s.trim()).filter(s=>!/^(Imprimer|PDF \/ Partager|Fermer)$/.test(s)),i=t.findIndex(Boolean),ti=t[i]||'Document';shareFile('Chantier360-'+D+'.pdf','application/pdf',mkPdf(ti,t.slice(i+1)),ti)}
 function doPrint(){if(nat()){msg('Dans le menu, choisissez Imprimer.');sharePdf()}else print()}
-const b64u=a=>btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),unb=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
-const ymd=()=>new Date().toISOString().slice(0,10).replace(/-/g,''),fmtD=e=>e.slice(6)+'/'+e.slice(4,6)+'/'+e.slice(0,4);let LIC=null;
-function dev(){let d=localStorage.getItem('c360d');if(!d){d=b64u(crypto.getRandomValues(new Uint8Array(6)));localStorage.setItem('c360d',d)}return d}
-async function chkLic(code){try{const[p,s]=code.trim().split('.'),k=await crypto.subtle.importKey('jwk',PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);if(!await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},k,unb(s),unb(p)))return null;const[d,e]=new TextDecoder().decode(unb(p)).split('|');return d===dev()?{d,e}:null}catch(e){return null}}
-async function initAcc(){LIC=null;const c=localStorage.getItem('c360l');if(c){const r=await chkLic(c);if(r&&(r.e==='0'||r.e>=ymd()))LIC=r}}
-function trial(){let t=null;try{t=JSON.parse(localStorage.getItem('c360t')||'null')}catch(e){}const n=Date.now();if(!t)t={t0:n,last:n};t.last=Math.max(t.last,n);try{localStorage.setItem('c360t',JSON.stringify(t))}catch(e){}return Math.ceil(PAY.jours-(t.last-t.t0)/864e5)}
-const access=()=>!!LIC||trial()>0;
-async function actCode(){const c=($('#ac').value||'').trim(),r=await chkLic(c);if(r&&(r.e==='0'||r.e>=ymd())){localStorage.setItem('c360l',c);$('#ov').style.display='none';unlock();msg('Licence activée.')}else{lgErr('Code invalide, expiré ou prévu pour un autre appareil.');msg('Code invalide.')}}
-function paywall(){lgShell(`<h2 style="text-align:center;margin:8px 0">Période d’essai terminée</h2><p class="err" style="display:block">Votre essai gratuit de ${PAY.jours} jours est terminé. Pour continuer, un abonnement de <b>${PAY.prix}</b> est nécessaire.</p>
-<h2>1. Payer</h2><p>${PAY.momo?'Mobile Money : <b>'+esc(PAY.momo)+'</b>':'Mobile Money : numéro à demander au support.'}</p>${PAY.carte?`<button class="btn" onclick="open('${PAY.carte}','_blank')">Payer par carte</button>`:''}
-<h2>2. Envoyer la preuve</h2><p class="h">Indiquez votre identifiant appareil : <b>${dev()}</b></p>${PAY.wa?`<button class="btn sec" onclick="open('https://wa.me/${PAY.wa}?text='+encodeURIComponent('Paiement Chantier360, appareil ${dev()}'),'_blank')">Envoyer par WhatsApp</button>`:''}
-<h2>3. Saisir le code reçu</h2><label>Code d’activation<input id="ac" autocapitalize="none"></label><p id="lge" class="err" role="alert"></p><button class="btn" onclick="actCode()">Activer</button>
-<button class="btn sec" onclick="expData()">Sauvegarder mes données</button><button class="btn sec" onclick="logout()">Se déconnecter</button>`)}
-function render(){if(!access()){document.body.classList.add('lock');return paywall()}render0();const d=trial();$('#tr').innerHTML=LIC?'':`<p class="warn" style="${d>2?'border-color:var(--acc);background:rgba(21,101,192,.08)':''}">Essai gratuit : <b>${d}</b> jour(s) restant(s). <a href="#" onclick="reg();return false" style="color:var(--acc);font-weight:700">Activer</a></p>`}
-function reg(){const d=trial();$('#ov').innerHTML=`<div class="doc"><button class="btn sec" style="margin-top:0" onclick="$('#ov').style.display='none'">Fermer</button><h1>Réglages</h1>
+const ymd=()=>new Date().toISOString().slice(0,10).replace(/-/g,''),fmtD=e=>e.slice(6)+'/'+e.slice(4,6)+'/'+e.slice(0,4);
+function render(){render0();$('#tr').innerHTML=''}
+function reg(){$('#ov').innerHTML=`<div class="doc"><button class="btn sec" style="margin-top:0" onclick="$('#ov').style.display='none'">Fermer</button><h1>Réglages</h1>
 <h2>Couleurs</h2><div class="card"><div class="chips">${PAL.map(p=>`<button onclick="setCol('${p[1]}')" style="border-left:8px solid ${p[1]}">${p[0]}</button>`).join('')}</div><label>Couleur personnalisée<input type="color" value="${S.col||'#1565C0'}" onchange="setCol(this.value)" style="height:46px;padding:2px"></label><button class="btn sec" onclick="setCol('')">Couleurs d’origine</button></div>
 <h2>Documents et impression</h2><div class="card"><label>Entreprise<input value="${esc(S.ent||'')}" oninput="S.ent=this.value;save()"></label><label>Chantier<input value="${esc(S.chan||'')}" oninput="S.chan=this.value;save()"></label><label>Papier<select onchange="S.pap=this.value;save();setPap()"><option value="a4">A4</option><option value="letter" ${S.pap==='letter'?'selected':''}>Letter</option></select></label><p class="h">Ces informations apparaissent en en-tête des rapports, impressions et PDF.</p></div>
 <h2>Partage de données</h2><div class="card"><button class="btn" style="margin-top:0" onclick="expData()">Partager une sauvegarde</button><label class="btn sec">Importer une sauvegarde<input type="file" accept=".json,application/json" hidden onchange="impData(this)"></label></div>
-<h2>Licence</h2><div class="card">${LIC?'<p class="ok"><b>Licence active</b>'+(LIC.e==='0'?'':' jusqu’au '+fmtD(LIC.e))+'</p>':`<p>Essai gratuit : <b>${d}</b> jour(s) restant(s).</p>`}<p class="h">Identifiant appareil : <b>${dev()}</b></p>${LIC?'':'<label>Code d’activation<input id="ac" autocapitalize="none"></label><button class="btn" onclick="actCode()">Activer</button>'}</div>
 <button class="btn dng" onclick="logout()">Se déconnecter</button></div>`;$('#ov').style.display='block'}
 
 /* ===== Moteur de dessin (PDF vectoriel + aperçu SVG) ===== */
@@ -425,12 +411,18 @@ const pick=(wc,hc,wp,hp)=>SCL.find(s=>wc*KP/s<=wp&&hc*KP/s<=hp)||200;
 const DI=[[8,'8'],[10,'10'],[12,'12'],[14,'14'],[16,'16'],[20,'20'],[25,'25'],[32,'32']],DC=[[6,'6'],[8,'8'],[10,'10']],NB=[[4,'4'],[6,'6'],[8,'8'],[10,'10'],[12,'12']];
 const PD={g:{fc:25,fe:500},
 pot:{r:'P1',b:25,h:25,H:3,c:3,n:4,dl:14,dc:6,sa:10,sc:15,lap:0},
-pou:{r:'PO1',L:5,b:25,h:40,c:3,ap:25,ni:3,di:14,ns:2,ds:12,nch:0,dch:12,dc:8,sa:10,sc:20,hk:0},
-sem:{r:'S1',A:120,B:120,h:40,a:25,b:25,c:5,pr:5,nA:8,dA:12,nB:8,dB:12,np:4,dp:14,at:60,ho:1}};
+pou:{r:'PO1',typ:'iso',nt:2,pl:'5;5',L:5,b:25,h:40,c:3,ap:25,ni:3,di:14,ns:2,ds:12,nch:0,dch:12,dc:8,sa:10,sc:20,hk:0},
+sem:{r:'S1',A:120,B:120,h:40,a:25,b:25,c:5,pr:5,nA:8,dA:12,nB:8,dB:12,np:4,dp:14,at:60,ho:1},
+voi:{r:'V1',Lv:4,e:20,H:3,c:3,nap:2,dv:10,sv:20,dh:10,sh:20,de:6,ep:4,lap:0},
+mur:{r:'M1',Lm:10,H:3,e:25,B:250,hs:35,a:60,c:5,gam:18,phi:30,q:10,sig:200,mu:.55,bh:0,dv:14,sv:15,dh:10,sh:20,db:14,sb:15,dt:14,st:15,dr:10,sr:20},
+dal:{r:'D1',Lx:4,Ly:5,h:15,c:2.5,dx:10,sx:15,dy:8,sy:20,dts:0,sts:20}};
 const PL=()=>{if(!S.pl)S.pl={};for(const k in PD)S.pl[k]=Object.assign({},PD[k],S.pl[k]||{});return S.pl};
 const FL={pot:[['r','Repère','t'],['b','Largeur b (cm)'],['h','Hauteur h (cm)'],['H','Hauteur du poteau (m)'],['c','Enrobage (cm)'],['n','Barres longitudinales',NB],['dl','Ø longitudinales (mm)',DI],['dc','Ø cadres (mm)',DC],['sa','Cadres : espacement en zone d’about (cm)'],['sc','Cadres : espacement en zone courante (cm)'],['lap','Recouvrement en tête (cm, 0 = 40 Ø)']],
-pou:[['r','Repère','t'],['L','Longueur hors-tout (m)'],['b','Largeur b (cm)'],['h','Hauteur h (cm)'],['c','Enrobage (cm)'],['ap','Largeur des appuis (cm)'],['ni','Barres inférieures (nombre)'],['di','Ø inférieures (mm)',DI],['ns','Barres supérieures (nombre)'],['ds','Ø supérieures (mm)',DI],['nch','Chapeaux par appui (nombre)'],['dch','Ø chapeaux (mm)',DI],['dc','Ø cadres (mm)',DC],['sa','Cadres : espacement en zone d’about (cm)'],['sc','Cadres : espacement en zone courante (cm)'],['hk','Crochets (cm, 0 = 12 Ø)']],
+pou:p=>[['r','Repère','t'],['typ','Type de poutre',[['iso','Isostatique (2 appuis)'],['con','Hyperstatique (continue)'],['lg','Longrine (sur appuis)'],['cs','Console (encastrée)']]],...(p.typ==='con'||p.typ==='lg'?[['nt','Nombre de travées',[...(p.typ==='lg'?[[1,'1 travée, 2 appuis']]:[]),[2,'2 travées, 3 appuis'],[3,'3 travées, 4 appuis'],[4,'4 travées, 5 appuis'],[5,'5 travées, 6 appuis'],[6,'6 travées, 7 appuis']]],['pl','Portées d’axe en axe (m), séparées par ;','t']]:[['L',p.typ==='cs'?'Longueur de la console (m)':'Longueur hors-tout (m)']]),['b','Largeur b (cm)'],['h','Hauteur h (cm)'],['c','Enrobage (cm)'],['ap','Largeur des appuis (cm)'],['ni','Barres inférieures (nombre par travée)'],['di','Ø inférieures (mm)',DI],['ns','Barres supérieures (nombre)'],['ds','Ø supérieures (mm)',DI],...(p.typ==='cs'?[]:[['nch','Chapeaux par appui (nombre)'],['dch','Ø chapeaux (mm)',DI]]),['dc','Ø cadres (mm)',DC],['sa','Cadres : espacement en zone d’about (cm)'],['sc','Cadres : espacement en zone courante (cm)'],['hk','Crochets (cm, 0 = 12 Ø)']],
 sem:[['r','Repère','t'],['A','Dimension A (cm)'],['B','Dimension B (cm)'],['h','Hauteur h (cm)'],['a','Poteau, côté a (cm)'],['b','Poteau, côté b (cm)'],['c','Enrobage (cm)'],['pr','Béton de propreté (cm)'],['nA','Barres parallèles à A (nombre)'],['dA','Ø barres // A (mm)',DI],['nB','Barres parallèles à B (nombre)'],['dB','Ø barres // B (mm)',DI],['np','Attentes du poteau (nombre)',NB],['dp','Ø attentes (mm)',DI],['at','Longueur des attentes (cm)'],['ho','Crochets aux extrémités',[[1,'Oui, 12 Ø'],[0,'Non']]]]};
+FL.dal=[['r','Repère','t'],['Lx','Dimension Lx (m)'],['Ly','Dimension Ly (m)'],['h','Épaisseur (cm)'],['c','Enrobage (cm)'],['dx','Nappe inf. sens x : Ø (mm)',DI],['sx','Nappe inf. sens x : espacement (cm)'],['dy','Nappe inf. sens y : Ø (mm)',DI],['sy','Nappe inf. sens y : espacement (cm)'],['dts','Nappe supérieure : Ø (mm)',[[0,'Aucune'],...DI]],['sts','Nappe supérieure : espacement (cm)']];
+FL.voi=[['r','Repère','t'],['Lv','Longueur du voile (m)'],['e','Épaisseur (cm)'],['H','Hauteur (m)'],['c','Enrobage (cm)'],['nap','Nappes d’armatures',[[2,'2 nappes (2 faces)'],[1,'1 nappe']]],['dv','Ø verticales (mm)',DI],['sv','Verticales : espacement (cm)'],['dh','Ø horizontales (mm)',DI],['sh','Horizontales : espacement (cm)'],['de','Ø épingles (mm)',DC],['ep','Épingles par m²'],['lap','Recouvrement en tête (cm, 0 = 40 Ø)']];
+FL.mur=[['r','Repère','t'],['Lm','Longueur du mur (m)'],['H','Hauteur du voile (m)'],['e','Épaisseur du voile (cm)'],['B','Largeur de la semelle B (cm)'],['hs','Épaisseur de la semelle (cm)'],['a','Patin, côté aval (cm)'],['c','Enrobage (cm)'],['gam','Poids volumique du sol (kN/m³)'],['phi','Angle de frottement φ (°)'],['q','Surcharge sur le remblai (kPa)'],['sig','Contrainte admissible du sol (kPa)'],['mu','Frottement sol/béton μ'],['bh','Bêche sous le voile (cm, 0 = sans)'],['dv','Voile, verticales Ø (mm)',DI],['sv','Voile, verticales : espacement (cm)'],['dh','Voile, horizontales Ø (mm)',DI],['sh','Voile, horizontales : espacement (cm)'],['db','Semelle, lit inférieur Ø (mm)',DI],['sb','Semelle, lit inférieur : espacement (cm)'],['dt','Semelle, lit supérieur Ø (mm)',DI],['st','Semelle, lit supérieur : espacement (cm)'],['dr','Répartition Ø (mm)',DI],['sr','Répartition : espacement (cm)']];
 let pt='pot';
 function cadPos(Lc,lz,sa,sc,st){sa=Math.max(+sa||10,3);sc=Math.max(+sc||15,3);if(Lc<=2*st)return[Lc/2];lz=Math.min(lz,Lc/2);
 const a=[];for(let y=st;y<=lz+1e-6;y+=sa)a.push(y);
@@ -452,15 +444,32 @@ if(np>0)bars.push(wt({m:3,t:`HA${p.dc} épingles`,d:p.dc,n:np*pos.length,lu:Lp})
 const cn=ringCnt(b,h,p.n),sH=(b-2*c-2*dc-(2+cn.H)*dl)/(1+cn.H),sV=(h-2*c-2*dc-(2+cn.V)*dl)/(1+cn.V),mn=Math.min(sH,sV),lim=Math.max(dl,2.5),rho=p.n*Math.PI*dl*dl/4/(b*h)*100,smax=Math.min(15*dl,40,Math.min(b,h)+10);
 const chk=[{ok:mn>=lim,t:`Espacement libre entre barres : ${f(mn,1)} cm (minimum ${f(lim,1)} cm)`},{ok:rho>=.8&&rho<=4,t:`Taux d’armatures : ${f(rho,2)} % (usuel 0,8 à 4 %)`},{ok:p.sc<=smax,t:`Cadres en zone courante : ${p.sc} cm (maximum ${f(smax,0)} cm)`},{ok:dc>=dl/3-1e-9,t:`Ø des cadres : ${p.dc} mm (minimum Ø/3 = ${f(dl*10/3,1)} mm)`}];
 return{nom:'poteau',rep:p.r,titre:`Poteau ${p.r}`,sous:`${b} × ${h} cm, H = ${f(p.H,2)} m`,sect:`${b}×${h}`,beton:b*h*H/1e6,coff:2*(b+h)*H/1e4,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,ex:{lap,lz,pos}}}
-function kPou(p){const L=p.L*100,b=+p.b,h=+p.h,c=+p.c,di=p.di/10,ds=p.ds/10,dc=p.dc/10,dh=p.dch/10,ap=+p.ap,nch=Math.max(0,+p.nch||0);
-if(!(L>0&&b>0&&h>0&&p.ni>=1&&p.ns>=1))return{err:'Renseignez les dimensions et les armatures de la poutre.'};
+function pouGeom(p){const ap=+p.ap,typ=p.typ||'iso';let T,sup,cl,sp;
+if(typ==='con'||typ==='lg'){const nt=Math.max(typ==='lg'?1:2,Math.min(6,+p.nt||(typ==='lg'?1:2)));sp=String(p.pl||'').split(/[;\s/]+/).map(x=>parseFloat(String(x).replace(',','.'))).filter(x=>x>0);if(!sp.length)sp=[5];while(sp.length<nt)sp.push(sp[sp.length-1]);sp=sp.slice(0,nt).map(x=>x*100);
+let x=ap/2;sup=[[0,ap]];sp.forEach(l=>{x+=l;sup.push([x-ap/2,x+ap/2])});T=x+ap/2;cl=sp.map((l,i)=>[sup[i][1],sup[i+1][0]]);return{typ,T,sup,cl,sp}}
+if(typ==='cs'){T=p.L*100+ap;return{typ,T,sup:[[0,ap]],cl:[[ap,T]],sp:[p.L*100]}}
+T=p.L*100;return{typ:'iso',T,sup:[[0,ap],[T-ap,T]],cl:[[ap,T-ap]],sp:[T-ap]}}
+function kPou(p){const g=pouGeom(p),T=g.T,typ=g.typ,b=+p.b,h=+p.h,c=+p.c,di=p.di/10,ds=p.ds/10,dc=p.dc/10,dh=p.dch/10,ap=+p.ap,ns=+p.ns,ni=+p.ni,nch=typ==='cs'?0:Math.max(0,+p.nch||0);
+if(!(T>0&&b>0&&h>0&&ni>=1&&ns>=1&&ap>0&&g.cl.every(s=>s[1]-s[0]>10)))return{err:'Renseignez les dimensions et les armatures de la poutre (chaque portée doit dépasser la largeur des appuis).'};
 if(2*c+2*dc+Math.max(di,ds)>=Math.min(b,h))return{err:'Enrobage et armatures trop grands pour la section.'};
-const hk=p.hk>0?+p.hk:12*Math.max(di,ds),hke=Math.max(0,Math.min(hk,h-2*c-dc-1)),lz=Math.min(2*h,L/2),pos=cadPos(L,lz,p.sa,p.sc,5),Ln=Math.max(0,L-2*ap),Lch=Ln/5,Lc=2*((b-2*c-dc)+(h-2*c-dc))+20*dc;
-const bars=[wt({m:1,t:`HA${p.di} inférieures`,d:p.di,n:+p.ni,lu:L-2*c+2*hke}),wt({m:2,t:`HA${p.ds} supérieures`,d:p.ds,n:+p.ns,lu:L-2*c+2*hke}),wt({m:3,t:`HA${p.dc} cadres`,d:p.dc,n:pos.length,lu:Lc})];
-if(nch>0)bars.push(wt({m:4,t:`HA${p.dch} chapeaux`,d:p.dch,n:2*nch,lu:Lch+ap-c+hke}));
-const sp=(n,d)=>n>1?(b-2*c-2*dc-n*d)/(n-1):99,mn=Math.min(sp(+p.ni,di),sp(+p.ns+nch,Math.max(ds,dh))),lim=Math.max(di,ds,2.5),dEff=h-c-dc-di/2,sC=Math.min(.9*dEff,40),sA=Math.min(h/4,12*Math.min(di,ds));
-const chk=[{ok:mn>=lim,t:`Espacement libre entre barres : ${mn>90?'—':f(mn,1)+' cm'} (minimum ${f(lim,1)} cm)`},{ok:p.sc<=sC,t:`Cadres en zone courante : ${p.sc} cm (maximum ${f(sC,0)} cm)`},{ok:p.sa<=sA,t:`Cadres en zone d’about : ${p.sa} cm (maximum ${f(sA,0)} cm)`},{ok:dc>=Math.max(di,ds)/3-1e-9,t:`Ø des cadres : ${p.dc} mm (minimum Ø/3 = ${f(Math.max(di,ds)*10/3,1)} mm)`}];
-return{nom:'poutre',rep:p.r,titre:`Poutre ${p.r}`,sous:`${b} × ${h} cm, L = ${f(p.L,2)} m`,sect:`${b}×${h}`,beton:b*h*L/1e6,coff:(b+2*h)*L/1e4,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,ex:{hk:hke,lz,pos,Ln,Lch}}}
+const hk=p.hk>0?+p.hk:12*Math.max(di,ds),hke=Math.max(0,Math.min(hk,h-2*c-dc-1)),lz=2*h,nsp=g.cl.length,Lc=2*((b-2*c-dc)+(h-2*c-dc))+20*dc;
+const stir=[];g.cl.forEach(s=>{const Ln=s[1]-s[0];cadPos(Ln,Math.min(lz,Ln/2),p.sa,p.sc,5).forEach(x=>stir.push(s[0]+x))});
+const infSeg=g.cl.map((s,i)=>{const xs=i===0?c:(g.sup[i][0]+g.sup[i][1])/2,xe=i===nsp-1?T-c:(g.sup[i+1][0]+g.sup[i+1][1])/2;return{xs,xe,lu:xe-xs+(i===0?hke:0)+(i===nsp-1?hke:0)}});
+let mn=0;const mk={inf:[],sup:0,cad:0,ch:[]},gi=[];
+infSeg.forEach((s,i)=>{let G=gi.find(x=>Math.round(x.lu)===Math.round(s.lu));if(!G){G={m:++mn,lu:s.lu,cnt:0,sp:[]};gi.push(G)}G.cnt++;G.sp.push(i+1);mk.inf[i]=G.m});
+const bars=gi.map(G=>wt({m:G.m,t:nsp>1?`HA${p.di} inf., travée ${G.sp.join(', ')}`:`HA${p.di} inférieures`,d:p.di,n:ni*G.cnt,lu:G.lu}));
+mk.sup=++mn;bars.push(wt({m:mk.sup,t:`HA${p.ds} supérieures`,d:p.ds,n:ns,lu:T-2*c+2*hke}));
+mk.cad=++mn;bars.push(wt({m:mk.cad,t:`HA${p.dc} cadres`,d:p.dc,n:stir.length,lu:Lc}));
+const chap=[];if(nch>0){const nS=g.sup.length;g.sup.forEach((s,k)=>{
+if(k===0){const L5=(g.cl[0][1]-g.cl[0][0])/5;chap.push({xa:c,xb:s[1]+L5,lu:L5+ap-c+hke,kind:'L'})}
+else if(k===nS-1){const L5=(g.cl[nsp-1][1]-g.cl[nsp-1][0])/5;chap.push({xa:s[0]-L5,xb:T-c,lu:L5+ap-c+hke,kind:'R'})}
+else{const Lm=Math.max(g.cl[k-1][1]-g.cl[k-1][0],g.cl[k][1]-g.cl[k][0]);chap.push({xa:s[0]-Lm/4,xb:s[1]+Lm/4,lu:ap+Lm/2,kind:'M'})}})}
+const gc=[];chap.forEach((q,i)=>{let G=gc.find(x=>Math.round(x.lu)===Math.round(q.lu));if(!G){G={m:++mn,lu:q.lu,cnt:0,first:i};gc.push(G)}G.cnt++;q.m=G.m});
+gc.forEach(G=>bars.push(wt({m:G.m,t:`HA${p.dch} chapeaux${gc.length>1?' '+f(G.lu,0)+' cm':''}`,d:p.dch,n:nch*G.cnt,lu:G.lu})));mk.ch=gc.map(G=>({m:G.m,first:G.first}));
+const sp_=(n,d)=>n>1?(b-2*c-2*dc-n*d)/(n-1):99,mnS=Math.min(sp_(ni,di),sp_(ns+nch,Math.max(ds,dh))),lim=Math.max(di,ds,2.5),dEff=h-c-dc-di/2,sC=Math.min(.9*dEff,40),sA=Math.min(h/4,12*Math.min(di,ds));
+const chk=[{ok:mnS>=lim,t:`Espacement libre entre barres : ${mnS>90?'—':f(mnS,1)+' cm'} (minimum ${f(lim,1)} cm)`},{ok:p.sc<=sC,t:`Cadres en zone courante : ${p.sc} cm (maximum ${f(sC,0)} cm)`},{ok:p.sa<=sA,t:`Cadres en zone d’about : ${p.sa} cm (maximum ${f(sA,0)} cm)`},{ok:dc>=Math.max(di,ds)/3-1e-9,t:`Ø des cadres : ${p.dc} mm (minimum Ø/3 = ${f(Math.max(di,ds)*10/3,1)} mm)`}];
+const lab=typ==='cs'?'Console':typ==='con'?'Poutre continue':typ==='lg'?'Longrine':'Poutre isostatique',info=typ==='cs'?[['Type','Console encastrée, 1 appui']]:[['Type',lab],['Appuis',`${g.sup.length} (${nsp} travée${nsp>1?'s':''})`]];
+return{nom:typ==='cs'?'console':typ==='lg'?'longrine':'poutre',rep:p.r,titre:`${typ==='cs'?'Console':typ==='lg'?'Longrine':'Poutre'} ${p.r}`,sous:`${b} × ${h} cm, ${nsp>1?nsp+' travées, ':''}L = ${f(T/100,2)} m`,sect:`${b}×${h}`,beton:b*h*T/1e6,coff:(b+2*h)*T/1e4,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,info,ex:{g,hk:hke,lz,stir,infSeg,chap,mk,nch}}}
 function kSem(p){const A=+p.A,B=+p.B,h=+p.h,c=+p.c,dA=p.dA/10,dB=p.dB/10,dp=p.dp/10,pr=+p.pr||0,ho=+p.ho?1:0,nA=Math.max(2,+p.nA),nB=Math.max(2,+p.nB);
 if(!(A>0&&B>0&&h>0&&+p.a>0&&+p.b>0))return{err:'Renseignez les dimensions de la semelle et du poteau.'};
 if(2*c+dA+dB>=h)return{err:'Hauteur trop faible pour cet enrobage et ces armatures.'};
@@ -468,7 +477,7 @@ const hkA=ho?Math.max(0,Math.min(12*dA,h-2*c-dA-1)):0,hkB=ho?Math.max(0,Math.min
 const bars=[wt({m:1,t:`HA${p.dA} // A`,d:p.dA,n:nA,lu:A-2*c+2*hkA}),wt({m:2,t:`HA${p.dB} // B`,d:p.dB,n:nB,lu:B-2*c+2*hkB}),wt({m:3,t:`HA${p.dp} attentes`,d:p.dp,n:+p.np,lu:(h-2*c)+(+p.at)+12*dp})];
 const eA=(B-2*c-dA)/(nA-1),eB=(A-2*c-dB)/(nB-1),chk=[{ok:eA-dA>=Math.max(dA,2.5)&&eA<=25,t:`Barres // A : espacement ${f(eA,1)} cm entre axes (usuel 10 à 25 cm)`},{ok:eB-dB>=Math.max(dB,2.5)&&eB<=25,t:`Barres // B : espacement ${f(eB,1)} cm entre axes (usuel 10 à 25 cm)`}];
 return{nom:'semelle',rep:p.r,titre:`Semelle ${p.r}`,sous:`${A} × ${B} × ${h} cm`,sect:`${A}×${B}×${h}`,beton:A*B*h/1e6,prop:pr>0?(A+20)*(B+20)*pr/1e6:0,coff:2*(A+B)*h/1e4,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,ex:{hkA,hkB}}}
-const KF={pot:kPot,pou:kPou,sem:kSem},KK=it=>KF[it.t](it.p);
+const KF={pot:kPot,pou:kPou,sem:kSem,voi:kVoi,mur:kMur,dal:kDal},KK=it=>KF[it.t](it.p);
 /* Éléments de dessin */
 function dimH(pg,x1,x2,y,t,o){pg.L(x1,y,x2,y,{lw:.5});for(const x of[x1,x2])pg.L(x-2.5,y-2.5,x+2.5,y+2.5,{lw:.9});pg.T((x1+x2)/2,y+((o&&o.below)?-9:3),t,7,{a:'c'})}
 function dimV(pg,x,y1,y2,t){pg.L(x,y1,x,y2,{lw:.5});for(const y of[y1,y2])pg.L(x-2.5,y-2.5,x+2.5,y+2.5,{lw:.9});pg.T(x-2,(y1+y2)/2,t,7,{a:'c',rot:90})}
@@ -507,8 +516,8 @@ lead(pg,sx+rb[1][0]*us,sy+rb[1][1]*us,bxr,sy+h*us*.22,1);pg.T(bxr+10,sy+h*us*.22
 lead(pg,sx+(b-c)*us,sy+h*us*.55,bxr,sy+h*us*.62,2);pg.T(bxr+10,sy+h*us*.62-2.5,`Cadres HA${p.dc}`,7.5);
 if(K.bars[2])pg.T(bxr+10,sy+h*us*.62-12,`+ épingles HA${p.dc}`,7,{col:'#444444'});
 nomen(pg,rx,sy-56,rw,K)}
-function secBeam(pg,sx,sy,us,p,withCh,lab,K){const b=+p.b,h=+p.h,c=+p.c,di=p.di/10,ds=p.ds/10,dc=p.dc/10,dh=p.dch/10,ni=+p.ni,ns=+p.ns,nch=withCh?Math.max(0,+p.nch||0):0;
-pg.T(sx+b*us/2,sy+h*us+9,lab,8,{b:1,a:'c'});pg.R(sx,sy,b*us,h*us,{lw:1.2,fill:'#F7F7F7'});
+function secBeam(pg,sx,sy,us,p,K,nch,mCh,mInf,lab){const b=+p.b,h=+p.h,c=+p.c,di=p.di/10,ds=p.ds/10,dc=p.dc/10,dh=p.dch/10,ni=+p.ni,ns=+p.ns,M=K.ex.mk;
+pg.T(Math.max(sx+b*us/2,34+tw(lab,8,1)/2),sy+h*us+9,lab,8,{b:1,a:'c'});pg.R(sx,sy,b*us,h*us,{lw:1.2,fill:'#F7F7F7'});
 pg.R(sx+(c+dc/2)*us,sy+(c+dc/2)*us,(b-2*c-dc)*us,(h-2*c-dc)*us,{col:BL,lw:Math.max(.8,dc*us)});
 const hx0=sx+(c+dc/2)*us,hy0=sy+(h-c-dc/2)*us,hl=Math.max(8,10*dc*us)*.7;pg.L(hx0,hy0,hx0+hl,hy0-hl,{col:BL,lw:Math.max(.8,dc*us)});
 const xi=c+dc+di/2,yi=c+dc+di/2,xs0=c+dc+ds/2,ys=h-c-dc-ds/2;
@@ -517,33 +526,40 @@ const N=ns+nch,prn=new Set(ns>1?Array.from({length:ns},(_,i)=>Math.round(i*(N-1)
 for(let i=0;i<N;i++){const x=N>1?xs0+(b-2*xs0)*i/(N-1):b/2,ch=!prn.has(i);pg.C(sx+x*us,sy+ys*us,Math.max(1.7,(ch?dh:ds)/2*us),{fill:ch?OR:RB,col:'#5A1A0A',lw:.4})}
 dimH(pg,sx,sx+b*us,sy-14,f(b,0),{below:1});dimV(pg,sx-14,sy,sy+h*us,f(h,0));
 const bxr=sx+b*us+18,yT=sy+ys*us;
-lead(pg,sx+(b-xi)*us,sy+yi*us,bxr,sy+yi*us,1);pg.T(bxr+10,sy+yi*us-2.5,`${ni} HA${p.di}`,7.5);
-lead(pg,sx+(b-xs0)*us,sy+ys*us,bxr,yT,2);pg.T(bxr+10,yT-2.5,`${ns} HA${p.ds}`,7.5);
-if(nch){lead(pg,sx+(b-xs0)*us,sy+ys*us,bxr,yT-15,4);pg.T(bxr+10,yT-17.5,`${nch} HA${p.dch} chap.`,7.5)}
-lead(pg,sx+(b-c)*us,sy+h*us*.5,bxr,sy+h*us*.5,3);pg.T(bxr+10,sy+h*us*.5-2.5,`Cad. HA${p.dc}`,7.5)}
-function drawPou(pg,bx,K,p){const L=p.L*100,b=+p.b,h=+p.h,c=+p.c,di=p.di/10,ds=p.ds/10,dc=p.dc/10,dh=p.dch/10,ap=+p.ap,nch=Math.max(0,+p.nch||0),{hk,lz,pos,Lch}=K.ex,cw=bx.x1-bx.x0,chh=bx.y1-bx.y0,top=bx.y1-26;
-const Se=pick(L,1.95*h,cw-90,Math.max(40,chh*.46-110)),ue=KP/Se,ox=bx.x0+(cw-L*ue)/2,yD=top-24,ybt=yD-8-(.25*h*ue+14),yb=ybt-h*ue,yz=yb-.7*h*ue-16;K.sc.push('Élévation 1:'+Se);
-pg.T(ox+L*ue/2,top-4,`ÉLÉVATION  Éch. 1:${Se}`,8,{b:1,a:'c'});
-const sup=x=>pg.R(x,yb-.7*h*ue,ap*ue,1.95*h*ue-.05*h*ue,{fill:'#ECECEC',lw:.8,dash:[3,2]});sup(ox);sup(ox+(L-ap)*ue);
-pg.R(ox,yb,L*ue,h*ue,{lw:1.3,fill:'#FAFAFA'});
-const y1=yb+(c+dc+di/2)*ue,y2=yb+(h-c-dc-ds/2)*ue,xa=ox+c*ue,xz=ox+(L-c)*ue,hu=hk*ue;
-pg.P([[xa,y1+hu],[xa,y1],[xz,y1],[xz,y1+hu]],{col:RB,lw:Math.max(1.1,di*ue)});
-pg.P([[xa,y2-hu],[xa,y2],[xz,y2],[xz,y2-hu]],{col:RB,lw:Math.max(1.1,ds*ue)});
-let y3=0;if(nch){y3=y2-(ds/2+dh/2+3)*ue;const lc=Math.max(1.1,dh*ue);pg.P([[xa,y3-hu*.8],[xa,y3],[ox+(ap+Lch)*ue,y3]],{col:OR,lw:lc});pg.P([[ox+(L-ap-Lch)*ue,y3],[xz,y3],[xz,y3-hu*.8]],{col:OR,lw:lc})}
-pos.forEach(s=>pg.L(ox+s*ue,yb+c*ue,ox+s*ue,yb+(h-c)*ue,{col:BL,lw:Math.max(.8,dc*ue)}));
-dimH(pg,ox,ox+L*ue,yD,f(L,0));dimV(pg,ox+L*ue+24,yb,ybt,f(h,0));
-dimH(pg,ox,ox+lz*ue,yz,f(lz,0),{below:1});dimH(pg,ox+lz*ue,ox+(L-lz)*ue,yz,f(L-2*lz,0),{below:1});dimH(pg,ox+(L-lz)*ue,ox+L*ue,yz,f(lz,0),{below:1});
-[[lz/2,p.sa],[L/2,p.sc],[L-lz/2,p.sa]].forEach(a=>pg.T(ox+a[0]*ue,yz-19,`e = ${a[1]}`,7,{a:'c',col:BL}));
+lead(pg,sx+(b-xi)*us,sy+yi*us,bxr,sy+yi*us,mInf);pg.T(bxr+10,sy+yi*us-2.5,`${ni} HA${p.di}`,7.5);
+lead(pg,sx+(b-xs0)*us,sy+ys*us,bxr,yT,M.sup);pg.T(bxr+10,yT-2.5,`${ns} HA${p.ds}`,7.5);
+if(nch&&mCh){lead(pg,sx+(b-xs0)*us,sy+ys*us,bxr,yT-15,mCh);pg.T(bxr+10,yT-17.5,`${nch} HA${p.dch} chap.`,7.5)}
+lead(pg,sx+(b-c)*us,sy+h*us*.5,bxr,sy+h*us*.5,M.cad);pg.T(bxr+10,sy+h*us*.5-2.5,`Cad. HA${p.dc}`,7.5)}
+function drawPou(pg,bx,K,p){const E=K.ex,G=E.g,T=G.T,typ=G.typ,M=E.mk,b=+p.b,h=+p.h,c=+p.c,di=p.di/10,ds=p.ds/10,dc=p.dc/10,dh=p.dch/10,ap=+p.ap,hk=E.hk,nch=E.nch,cw=bx.x1-bx.x0,chh=bx.y1-bx.y0,top=bx.y1-26;
+const Se=pick(T,1.95*h,cw-90,Math.max(40,chh*.46-150)),ue=KP/Se,ox=bx.x0+(cw-T*ue)/2,yD=top-24,ybt=yD-8-(.25*h*ue+14),yb=ybt-h*ue,yz=yb-.7*h*ue-16,yz2=yz-24,X=x=>ox+x*ue;K.sc.push('Élévation 1:'+Se);
+pg.T(ox+T*ue/2,top-4,`ÉLÉVATION  Éch. 1:${Se}`,8,{b:1,a:'c'});
+G.sup.forEach(s=>pg.R(X(s[0]),yb-.7*h*ue,ap*ue,1.95*h*ue-.05*h*ue,{fill:'#ECECEC',lw:.8,dash:[3,2]}));
+pg.R(ox,yb,T*ue,h*ue,{lw:1.3,fill:'#FAFAFA'});
+const y1=yb+(c+dc+di/2)*ue,y2=yb+(h-c-dc-ds/2)*ue,hu=hk*ue,y3=y2-(ds/2+dh/2+3)*ue,nI=E.infSeg.length;
+E.infSeg.forEach((s,i)=>{const L0=i===0,L1=i===nI-1,xa=X(s.xs+(L0?0:2)),xz=X(s.xe-(L1?0:2)),pts=[];if(L0)pts.push([xa,y1+hu]);pts.push([xa,y1],[xz,y1]);if(L1)pts.push([xz,y1+hu]);pg.P(pts,{col:RB,lw:Math.max(1.1,di*ue)})});
+pg.P([[X(c),y2-hu],[X(c),y2],[X(T-c),y2],[X(T-c),y2-hu]],{col:RB,lw:Math.max(1.1,ds*ue)});
+E.chap.forEach(q=>{const pts=[];if(q.kind==='L')pts.push([X(q.xa),y3-hu*.8]);pts.push([X(q.xa),y3],[X(q.xb),y3]);if(q.kind==='R')pts.push([X(q.xb),y3-hu*.8]);pg.P(pts,{col:OR,lw:Math.max(1.1,dh*ue)})});
+E.stir.forEach(s=>pg.L(X(s),yb+c*ue,X(s),yb+(h-c)*ue,{col:BL,lw:Math.max(.8,dc*ue)}));
+dimH(pg,ox,X(T),yD,f(T,0));dimV(pg,X(T)+24,yb,ybt,f(h,0));
+G.cl.forEach(s=>dimH(pg,X(s[0]),X(s[1]),yz,f(s[1]-s[0],0),{below:1}));
+const s0=G.cl[0],Ln0=s0[1]-s0[0],lz=Math.min(E.lz,Ln0/2);
+dimH(pg,X(s0[0]),X(s0[0]+lz),yz2,f(lz,0),{below:1});if(Ln0-2*lz>1)dimH(pg,X(s0[0]+lz),X(s0[1]-lz),yz2,f(Ln0-2*lz,0),{below:1});dimH(pg,X(s0[1]-lz),X(s0[1]),yz2,f(lz,0),{below:1});
+[[lz/2,p.sa],...(Ln0-2*lz>1?[[Ln0/2,p.sc]]:[]),[Ln0-lz/2,p.sa]].forEach(a=>pg.T(X(s0[0]+a[0]),yz2-19,`e = ${a[1]}`,7,{a:'c',col:BL}));
 const cut=(x,l)=>{pg.L(x,yb-.25*h*ue,x,ybt+.25*h*ue,{lw:.8,dash:[8,2,2,2]});pg.T(x,ybt+.25*h*ue+3,l,8,{b:1,a:'c'});pg.T(x,yb-.25*h*ue-10,l,8,{b:1,a:'c'})};
-const xA=ox+(ap+6)*ue;cut(xA,'A');cut(ox+L/2*ue,'B');
-lead(pg,ox+L*ue*.62,y1,ox+L*ue*.62,yb-.45*h*ue,1);lead(pg,ox+L*ue*.22,y2,ox+L*ue*.22,ybt+.2*h*ue+7,2);
-const ks=pos[Math.floor(pos.length*.78)];lead(pg,ox+ks*ue,yb+(h-c)*ue,ox+ks*ue,ybt+.2*h*ue+7,3);
-if(nch)lead(pg,ox+(ap+Lch)*ue,y3,ox+(ap+Lch)*ue,yb-.45*h*ue,4);
-pg.T(ox+L*ue/2,yz-32,`Poutre ${p.r}   ${b} × ${h}   L = ${f(L,0)} cm`,8.5,{b:1,a:'c'});
-const tab=Math.min(361,cw-250),secTop=yz-50,av=secTop-bx.y0,Ss=pick(b,h,Math.min(76,(cw-tab-60-190)/2),Math.max(40,av-62)),us=KP/Ss,s1=bx.x0+26,s2=s1+b*us+112,sy=secTop-28-h*us;K.sc.push('Coupes 1:'+Ss);
-secBeam(pg,s1,sy,us,p,true,`COUPE A-A (appui)  1:${Ss}`,K);secBeam(pg,s2,sy,us,p,false,`COUPE B-B (mi-travée)  1:${Ss}`,K);
+let xA,labA,xB,labB,kA=0;
+if(G.sup.length>2){xA=X((G.sup[1][0]+G.sup[1][1])/2);labA='appui intermédiaire';kA=1}else if(typ==='cs'){xA=X(ap+6);labA='encastrement'}else{xA=X(ap+6);labA='appui'}
+if(typ==='cs'){xB=X(T-15);labB='extrémité'}else{xB=X((s0[0]+s0[1])/2);labB='mi-travée'}
+cut(xA,'A');cut(xB,'B');
+E.infSeg.forEach((s,i)=>{if(M.inf.indexOf(M.inf[i])!==i)return;const x=X(s.xs+(s.xe-s.xs)*.62);lead(pg,x,y1,x,yb-.45*h*ue,M.inf[i])});
+const xt=X(s0[0]+Ln0*.2);lead(pg,xt,y2,xt,ybt+.2*h*ue+7,M.sup);
+const tg=s0[0]+Ln0*.75,ks=E.stir.reduce((a,x)=>Math.abs(x-tg)<Math.abs(a-tg)?x:a,E.stir[0]);lead(pg,X(ks),yb+(h-c)*ue,X(ks),ybt+.2*h*ue+7,M.cad);
+M.ch.forEach(g=>{const q=E.chap[g.first],xm=X((q.xa+q.xb)/2);lead(pg,xm,y3,xm,yb-.45*h*ue,g.m)});
+pg.T(ox+T*ue/2,yz2-32,`${K.titre}   ${b} × ${h}   L = ${f(T,0)} cm`,8.5,{b:1,a:'c'});
+const tab=Math.min(361,cw-250),secTop=yz2-50,av=secTop-bx.y0,Ss=pick(b,h,Math.min(76,(cw-tab-60-190)/2),Math.max(40,av-82)),us=KP/Ss,s1=bx.x0+26,s2=s1+b*us+112,sy=secTop-28-h*us;K.sc.push('Coupes 1:'+Ss);
+const mA=nch>0&&E.chap[kA]?E.chap[kA].m:0;
+secBeam(pg,s1,sy,us,p,K,nch,mA,M.inf[0],`COUPE A-A (${labA})  1:${Ss}`);secBeam(pg,s2,sy,us,p,K,0,0,M.inf[0],`COUPE B-B (${labB})  1:${Ss}`);
 nomen(pg,bx.x1-tab,secTop,tab,K);
-note(pg,bx.x0,bx.y0+14,Math.max(150,s2+b*us+100-bx.x0-20),'Cotes en cm. Crochets : '+f(hk,0)+' cm. Cadres : crochets 10 Ø à 135°, premier cadre à 5 cm des appuis. Zone d’about = 2 h. Chapeaux : Ln/5 de part et d’autre des appuis. Plan indicatif à valider par l’ingénieur.')}
+note(pg,bx.x0,bx.y0+14,Math.max(150,cw-tab-40),'Cotes en cm. '+(G.sup.length>2?'Poutre continue : chapeaux sur appuis intermédiaires = Lm/4 de chaque côté (Lm = plus grande portée libre voisine), sur appuis de rive = Ln/5. ':typ==='cs'?'Console : armatures principales en partie haute, ancrées dans le poteau. ':'Chapeaux sur appuis de rive : Ln/5. ')+'Crochets : '+f(hk,0)+' cm. Cadres : crochets 10 Ø à 135°, premier cadre à 5 cm du nu des appuis, zone d’about = 2 h. Plan indicatif à valider par l’ingénieur.')}
 function drawSem(pg,bx,K,p){const A=+p.A,B=+p.B,h=+p.h,a=+p.a,bb=+p.b,c=+p.c,dA=p.dA/10,dB=p.dB/10,dp=p.dp/10,pr=+p.pr||0,{hkA,hkB}=K.ex,nA=Math.max(2,+p.nA),nB=Math.max(2,+p.nB),cw=bx.x1-bx.x0,chh=bx.y1-bx.y0,top=bx.y1-26,lw=cw*.46,rx=bx.x0+lw+36,rw=bx.x1-rx;
 const Ss=SCL.find(s=>{const u=KP/s;return A*u<=lw-90&&(B+20)*u<=top-bx.y0-90&&A*u<=rw-120&&(h+pr+45)*u<=top-bx.y0-210})||200,us=KP/Ss;K.sc.push('1:'+Ss);
 const px=bx.x0+50,py=top-26-(B+10)*us;
@@ -577,7 +593,7 @@ note(pg,bx.x0,bx.y0+20,lw-10,'Cotes en cm. Crochets des barres : 12 Ø. Attentes
 function planPage(it,K){K=K||KK(it);K.sc=[];const g=PL().g,L=S.pap==='letter',W=L?792:842,H=L?612:595,m=20,ch=56,pg=new Pg(W,H),bx={x0:m+10,x1:W-m-10,y0:m+ch+10,y1:H-m-10};
 pg.R(m,m,W-2*m,H-2*m,{lw:1.3});
 pg.T(bx.x0,bx.y1-12,'PLAN DE COFFRAGE ET DE FERRAILLAGE',11,{b:1,col:S.col||'#1565C0'});pg.T(bx.x1,bx.y1-12,K.titre+'  —  '+K.sous,9,{b:1,a:'r'});
-({pot:drawPot,pou:drawPou,sem:drawSem}[it.t])(pg,bx,K,it.p);
+({pot:drawPot,pou:drawPou,sem:drawSem,voi:drawVoi,mur:drawMur,dal:drawDal}[it.t])(pg,bx,K,it.p);
 pg.L(m,m+ch,W-m,m+ch,{lw:1.1});const u=getU(),tot=W-2*m,fr=[.27,.30,.15,.12,.16],cells=[['ENTREPRISE / CHANTIER',[S.ent||'—',S.chan||'']],['DOCUMENT',[K.titre,K.sous]],['MATÉRIAUX',['Béton fc28 = '+g.fc+' MPa','Acier HA Fe E'+g.fe]],['ÉCHELLES',K.sc.length?K.sc:['—']],['DATE / DESSINÉ PAR',[new Date().toLocaleDateString('fr-FR'),u?u.nom:'']]];
 let xx=m;cells.forEach((cl,i)=>{const w=tot*fr[i];if(i)pg.L(xx,m,xx,m+ch,{lw:.8});pg.T(xx+5,m+ch-9,cl[0],6,{col:'#6B7785',b:1});cl[1].slice(0,3).forEach((t,j)=>pg.T(xx+5,m+ch-22-j*11,fitT(t,w-10,j?7.5:8.5,!j),j?7.5:8.5,{b:!j}));xx+=w});
 return pg}
@@ -595,17 +611,17 @@ pg.T(m+16,m+14,'Quantités théoriques calculées à partir des plans. Pertes, c
 /* Interface */
 function fld(t,x){const[k,lb,o]=x,v=PL()[t][k];
 if(o==='t')return `<label>${lb}<input value="${esc(v)}" oninput="plS('${t}','${k}',this.value,1)"></label>`;
-if(o)return `<label>${lb}<select onchange="plS('${t}','${k}',this.value)">${o.map(q=>`<option value="${q[0]}" ${q[0]==v?'selected':''}>${q[1]}</option>`).join('')}</select></label>`;
+if(o)return `<label>${lb}<select onchange="plS('${t}','${k}',this.value,${typeof o[0][0]==='string'?1:0})">${o.map(q=>`<option value="${q[0]}" ${q[0]==v?'selected':''}>${q[1]}</option>`).join('')}</select></label>`;
 return `<label>${lb}<input type="number" inputmode="decimal" step="any" value="${v}" oninput="plS('${t}','${k}',this.value)"></label>`}
-function plS(t,k,v,s){PL()[t][k]=s?v:(+v||0);save();plR()}
-function cpl(){const g=PL().g,fs=FL[pt],rows=[];for(let i=0;i<fs.length;i+=2)rows.push(fs.slice(i,i+2));
-$('#cv2').innerHTML=`<div class="seg">${[['pot','Poteau'],['pou','Poutre'],['sem','Semelle']].map(o=>`<button class="${pt===o[0]?'on':''}" onclick="pt='${o[0]}';cpl()">${o[1]}</button>`).join('')}</div>
+function plS(t,k,v,s){PL()[t][k]=s?v:(+v||0);save();if(k==='typ'||k==='nt')cpl();else plR()}
+function cpl(){const g=PL().g,fl=FL[pt],fs=typeof fl==='function'?fl(PL()[pt]):fl,rows=[];for(let i=0;i<fs.length;i+=2)rows.push(fs.slice(i,i+2));
+$('#cv2').innerHTML=`<div class="seg" style="flex-wrap:wrap">${[['pot','Poteau'],['pou','Poutre'],['sem','Semelle'],['voi','Voile'],['mur','Mur sout.'],['dal','Dalle']].map(o=>`<button class="${pt===o[0]?'on':''}" onclick="pt='${o[0]}';cpl()">${o[1]}</button>`).join('')}</div>
 <div class="card"><div class="row"><label>Béton fc28<select onchange="PL().g.fc=+this.value;save();plR()">${[20,25,30,35].map(v=>`<option ${v==g.fc?'selected':''}>${v}</option>`).join('')}</select></label><label>Acier HA Fe E<select onchange="PL().g.fe=+this.value;save();plR()">${[400,500].map(v=>`<option ${v==g.fe?'selected':''}>${v}</option>`).join('')}</select></label></div>
 ${rows.map(r=>`<div class="row">${r.map(x=>fld(pt,x)).join('')}</div>`).join('')}</div><div id="plo"></div><div id="pld"></div>`;plR();plD()}
 function plR(){const el=$('#plo');if(!el)return;const K=KF[pt](PL()[pt]);
 if(K.err){el.innerHTML=`<p class="warn">${K.err}</p>`;return}
 const pg=planPage({t:pt,p:PL()[pt]},K);
-el.innerHTML=`<div class="card"><h2 style="margin-top:0">${K.titre}</h2>${rs([['Béton',f(K.beton,3)+' m³'],...(K.prop?[['Béton de propreté',f(K.prop,3)+' m³']]:[]),['Coffrage',f(K.coff,2)+' m²'],['Acier',f(K.acier,1)+' kg ('+f(K.acier/K.beton,0)+' kg/m³)']])}
+el.innerHTML=`<div class="card"><h2 style="margin-top:0">${K.titre}</h2>${rs([...(K.info||[]),['Béton',f(K.beton,3)+' m³'],...(K.prop?[['Béton de propreté',f(K.prop,3)+' m³']]:[]),['Coffrage',f(K.coff,2)+' m²'],['Acier',f(K.acier,1)+' kg ('+f(K.acier/K.beton,0)+' kg/m³)']])}
 <div style="margin-top:8px">${K.chk.map(x=>`<p class="h ${x.ok?'ok':'bad'}" style="margin:3px 0">${x.ok?'✓':'⚠'} ${x.t}</p>`).join('')}</div></div>
 <div class="card" style="padding:8px"><div style="overflow-x:auto"><div style="min-width:640px">${svgOf(pg)}</div></div><p class="h" style="margin:6px 4px 0">Faites défiler pour voir tout le plan. Le PDF est en A4 paysage.</p></div>
 <button class="btn" onclick="plPdf()">Plan en PDF (partager)</button><button class="btn sec" onclick="plAdd()">Ajouter au dossier</button><button class="btn sec" onclick="plX()">Quantités au DPGF</button>`}
@@ -620,6 +636,182 @@ el.innerHTML=`<h2>Dossier de plans (${L.length})</h2><div class="card">${L.map((
 function plDossier(){const L=S.plans||[];if(!L.length){msg('Le dossier est vide.');return}const ks=L.map(it=>({it,K:KK(it)})).filter(x=>!x.K.err);if(!ks.length){msg('Aucun élément complet.');return}
 shareFile('Dossier-plans-BA-'+ymd()+'.pdf','application/pdf',buildPdf([...ks.map(x=>planPage(x.it,x.K)),recapPage(ks.map(x=>x.it))]),'Dossier de plans')}
 function plDX(){LN=[];(S.plans||[]).forEach(it=>{const K=KK(it);if(!K.err)LN.push(...planLines(K))});if(!LN.length){msg('Aucun élément complet.');return}addX()}
+
+/* ===== Voile ===== */
+function kVoi(p){const Lv=p.Lv*100,e=+p.e,H=p.H*100,c=+p.c,nap=+p.nap===1?1:2,dv=p.dv/10,dh=p.dh/10,de=p.de/10,sv=+p.sv,sh=+p.sh;
+if(!(Lv>0&&e>0&&H>0&&sv>0&&sh>0))return{err:'Renseignez les dimensions et les armatures du voile.'};
+if(2*c+dv+dh>=e)return{err:'Enrobage et armatures trop grands pour l’épaisseur du voile.'};
+const lap=p.lap>0?+p.lap:40*dv,nv=Math.floor((Lv-2*c)/sv+1e-9)+1,nh=Math.floor((H-2*c)/sh+1e-9)+1,np=nap===2?Math.ceil(Lv*H/1e4*(+p.ep||0)):0;
+const bars=[wt({m:1,t:`HA${p.dv} verticales`,d:p.dv,n:nv*nap,lu:H+lap}),wt({m:2,t:`HA${p.dh} horizontales`,d:p.dh,n:nh*nap,lu:Lv-2*c})];
+if(np>0)bars.push(wt({m:3,t:`HA${p.de} épingles`,d:p.de,n:np,lu:e-2*c+20*de}));
+const asv=Math.PI*p.dv*p.dv/4*(100/sv)/100*nap,ash=Math.PI*p.dh*p.dh/4*(100/sh)/100*nap,smax=Math.min(1.5*e,30);
+const chk=[{ok:e>=15,t:`Épaisseur : ${e} cm (minimum usuel 15 cm)`},{ok:sv<=smax,t:`Verticales : espacement ${sv} cm (maximum ${f(smax,0)} cm)`},{ok:sh<=smax,t:`Horizontales : espacement ${sh} cm (maximum ${f(smax,0)} cm)`},{ok:asv/e>=.15,t:`Taux vertical : ${f(asv/e,2)} % (minimum usuel 0,15 %)`},{ok:ash/e>=.15,t:`Taux horizontal : ${f(ash/e,2)} % (minimum usuel 0,15 %)`}];
+return{nom:'voile',rep:p.r,titre:`Voile ${p.r}`,sous:`${f(p.Lv,2)} m × ${e} cm × ${f(p.H,2)} m`,sect:`${f(p.Lv,2)}×${e}×${f(p.H,2)}`,beton:Lv*e*H/1e6,coff:(2*Lv*H+2*e*H)/1e4,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,ex:{lap,nv,nh,nap}}}
+function drawVoi(pg,bx,K,p){const Lv=p.Lv*100,e=+p.e,H=p.H*100,c=+p.c,dv=p.dv/10,dh=p.dh/10,de=p.de/10,{lap,nv,nh,nap}=K.ex,cw=bx.x1-bx.x0,top=bx.y1-26,lw=cw*.56,y0v=bx.y0+84,Se=pick(Lv,H,lw-110,top-30-y0v),ue=KP/Se,yb=Math.max(y0v,top-30-H*ue),ex=bx.x0+66,uy=v=>yb+v*ue,ux=v=>ex+v*ue;K.sc.push('Élévation 1:'+Se);
+pg.T(ex+Lv*ue/2,top-4,`ÉLÉVATION  Éch. 1:${Se}`,8,{b:1,a:'c'});
+pg.L(ex-20,yb,ex+Lv*ue+20,yb,{lw:1.6});pg.R(ex,yb,Lv*ue,H*ue,{lw:1.2,fill:'#F7F7F7'});
+const gx=nv>1?(Lv-2*c-dv)/(nv-1):0,gy=nh>1?(H-2*c-dh)/(nh-1):0,stV=Math.max(1,Math.ceil(2/Math.max(.01,gx*ue))),stH=Math.max(1,Math.ceil(2/Math.max(.01,gy*ue)));
+for(let j=0;j<nv;j+=stV){const x=ux(c+dv/2+j*gx);pg.L(x,uy(c),x,uy(H-c),{col:RB,lw:Math.max(.5,dv*ue*.8)})}
+for(let k=0;k<nh;k+=stH){const y=uy(c+dh/2+k*gy);pg.L(ux(c),y,ux(Lv-c),y,{col:BL,lw:Math.max(.5,dh*ue*.8)})}
+dimH(pg,ex,ex+Lv*ue,yb-14,f(Lv,0),{below:1});dimV(pg,ex-34,yb,uy(H),f(H,0));
+lead(pg,ux(c+dv/2),uy(H*.6),ex-20,uy(H*.6),1);const kk=Math.min(nh-1,Math.round(nh*.35)),yk=uy(c+dh/2+kk*gy);lead(pg,ux(Lv-c),yk,ex+Lv*ue+20,yk,2);
+pg.T(ex+Lv*ue/2,yb-42,`Voile ${p.r}   ${f(Lv,0)} × ${f(e,0)} × ${f(H,0)}`,8.5,{b:1,a:'c'});
+note(pg,bx.x0,bx.y0+20,lw-10,'Cotes en cm. Verticales HA'+p.dv+' e = '+p.sv+' cm, horizontales HA'+p.dh+' e = '+p.sh+' cm'+(nap===2?', sur 2 faces.':', sur 1 face.')+' Recouvrement en tête : '+f(lap,0)+' cm. Crochets des épingles : 10 Ø. Chaînages, linteaux et renforts d’ouvertures non représentés. Plan indicatif à valider par l’ingénieur.');
+const rx=bx.x0+lw+34,rw=bx.x1-rx,Ls=Math.min(Lv,5*p.sv+2*c+dv),Ss=pick(Ls,e,Math.min(rw*.5,190),150),us=KP/Ss,sx=rx+34,sy=top-44-e*us;K.sc.push('Coupe 1:'+Ss);
+pg.T(rx,top-4,`COUPE HORIZONTALE   Éch. 1:${Ss}`,8,{b:1});
+pg.R(sx,sy,Ls*us,e*us,{lw:1.2,fill:'#F7F7F7'});
+const yh1=sy+(c+dh/2)*us,yh2=sy+(e-c-dh/2)*us,yv1=sy+(c+dh+dv/2)*us,yv2=sy+(e-c-dh-dv/2)*us,xEnd=sx+(Ls<Lv?Ls:Ls-c)*us;
+pg.L(sx+c*us,yh1,xEnd,yh1,{col:BL,lw:Math.max(1.1,dh*us)});if(nap===2)pg.L(sx+c*us,yh2,xEnd,yh2,{col:BL,lw:Math.max(1.1,dh*us)});
+let xl=0;for(let j=0;c+dv/2+j*p.sv<=Ls-c-dv/2+1e-6;j++){const x=sx+(c+dv/2+j*p.sv)*us;xl=x;pg.C(x,yv1,Math.max(1.7,dv/2*us),{fill:RB,col:'#7F0000',lw:.4});if(nap===2){pg.C(x,yv2,Math.max(1.7,dv/2*us),{fill:RB,col:'#7F0000',lw:.4});if(j%2===0)pg.L(x,yv1,x,yv2,{col:BL,lw:Math.max(.7,de*us)})}}
+if(Ls<Lv)pg.P([[sx+Ls*us,sy-4],[sx+Ls*us+4,sy+e*us*.33],[sx+Ls*us-4,sy+e*us*.66],[sx+Ls*us,sy+e*us+4]],{lw:.9});
+dimV(pg,sx-14,sy,sy+e*us,f(e,0));const x0v=c+dv/2;if(Ls>=x0v+p.sv)dimH(pg,sx+x0v*us,sx+(x0v+p.sv)*us,sy-14,f(p.sv,0),{below:1});
+const mx=sx+Ls*us+20,mc=sy+e*us/2;lead(pg,xEnd,yh1,mx,mc-17,2);pg.T(mx+10,mc-19.5,`HA${p.dh} e = ${p.sh}`,7.5);
+lead(pg,xl,yv1,mx,mc,1);pg.T(mx+10,mc-2.5,`HA${p.dv} e = ${p.sv}`,7.5);
+if(nap===2&&K.bars[2]){lead(pg,xl,yv2,mx,mc+17,3);pg.T(mx+10,mc+14.5,`Épingles HA${p.de}`,7.5)}
+nomen(pg,rx,sy-58,rw,K)}
+/* ===== Mur de soutènement ===== */
+function kMur(p){const g=PL().g,H=+p.H,e=p.e/100,B=p.B/100,hs=p.hs/100,a=p.a/100,t=B-a-e,gam=+p.gam,ph=p.phi*Math.PI/180,q=+p.q,sg=+p.sig,Lm=+p.Lm,c=+p.c,mu=+p.mu||.5;
+if(!(H>0&&e>0&&B>0&&hs>0&&a>=0&&Lm>0&&gam>0&&p.phi>0&&p.phi<60))return{err:'Renseignez les dimensions du mur et les caractéristiques du sol.'};
+if(t<=.05)return{err:'Semelle trop étroite : le talon doit dépasser 5 cm (B > patin + épaisseur du voile).'};
+if(2*c+p.db/10+p.dr/10>=p.hs||2*c+p.dt/10+p.dr/10>=p.hs)return{err:'Enrobage et armatures trop grands pour l’épaisseur de la semelle.'};
+if(2*c+(p.dv+p.dh)/10>=p.e)return{err:'Enrobage et armatures trop grands pour l’épaisseur du voile.'};
+const Ka=Math.pow(Math.tan(Math.PI/4-ph/2),2),Ht=H+hs,Pg=.5*Ka*gam*Ht*Ht,Pq=Ka*q*Ht,Ph=Pg+Pq,Mr=Pg*Ht/3+Pq*Ht/2,bh=(+p.bh||0)/100,Wb=e*bh*25,Pp=.25*gam*bh*bh/Ka;
+const W1=e*H*25,x1=a+e/2,W2=B*hs*25,x2=B/2,W3=t*H*gam,x3=a+e+t/2,W4=t*q,SV=W1+W2+W3+Wb,Ms=W1*x1+W2*x2+W3*x3+Wb*x1,Fr=Ms/Mr,Fg=(mu*SV+Pp)/Ph,SV2=SV+W4,Ms2=Ms+W4*x3,xr=(Ms2-Mr)/SV2,ec=B/2-xr;
+let smax,smin,Lc=B;
+if(xr<=0){smax=Infinity;smin=0;Lc=.001}else if(Math.abs(ec)<=B/6){smax=SV2/B*(1+6*ec/B);smin=SV2/B*(1-6*ec/B)}else{Lc=3*xr;smax=2*SV2/Lc;smin=0}
+const sgm=x=>Lc<B?(x<Lc?smax*(1-x/Lc):0):smax+(smin-smax)*x/B,integ=(fn,x0,x1_)=>{const n=200,d=(x1_-x0)/n;let s=0;for(let i=0;i<n;i++)s+=fn(x0+(i+.5)*d)*d;return s};
+const Mp=isFinite(smax)?integ(x=>sgm(x)*(a-x),0,a)-hs*25*a*a/2:0,Mt=(gam*H+q+25*hs)*t*t/2-(isFinite(smax)?integ(x=>sgm(x)*(x-(a+e)),a+e,B):0);
+const Muv=1.35*Ka*gam*H**3/6+1.5*Ka*q*H*H/2,fsu=g.fe/1.15,ft=.6+.06*g.fc,asr=(Mu,d)=>Mu>0?Mu*1e6/(.9*d*10*fsu)/100:0,asm=d=>.23*1000*(d*10)*ft/g.fe/100;
+const dV=p.e-p.c-p.dv/20,dP=p.hs-p.c-p.db/20,dT=p.hs-p.c-p.dt/20,Asv=Math.max(asr(Muv,dV),asm(dV)),Asp=Math.max(asr(1.4*Mp,dP),asm(dP)),Ast=Math.max(asr(1.4*Mt,dT),asm(dT));
+const pv=(d,s)=>Math.PI*d*d/4*(100/s)/100,provV=pv(p.dv,p.sv),provH=pv(p.dh,p.sh)*2,provB=pv(p.db,p.sb),provT=pv(p.dt,p.st),LmC=Lm*100,cnt=(L,s)=>Math.floor((L-2*c)/s+1e-9)+1;
+const foot=Math.max(0,Math.min(40*p.dv/10,t*100-c)),hkb=Math.max(0,Math.min(12*p.db/10,p.hs-2*c-1)),hkt=Math.max(0,Math.min(12*p.dt/10,p.hs-2*c-1));
+const bars=[wt({m:1,t:`HA${p.dv} verticales (terre)`,d:p.dv,n:cnt(LmC,p.sv),lu:(H+hs)*100-2*c+foot}),wt({m:2,t:`HA${p.dh} horizontales`,d:p.dh,n:2*cnt(H*100,p.sh),lu:LmC-2*c}),wt({m:3,t:`HA${p.db} semelle inf.`,d:p.db,n:cnt(LmC,p.sb),lu:B*100-2*c+hkb}),wt({m:4,t:`HA${p.dt} semelle sup.`,d:p.dt,n:cnt(LmC,p.st),lu:t*100-c+40*p.dt/10+hkt}),wt({m:5,t:`HA${p.dr} verticales (avant)`,d:p.dr,n:cnt(LmC,p.sr),lu:H*100-c+Math.max(0,Math.min(p.hs-2*c,30))}),wt({m:6,t:`HA${p.dr} longitudinales`,d:p.dr,n:2*cnt(B*100,p.sr),lu:LmC-2*c})];
+const fx=(v,d)=>isFinite(v)?f(v,d):'non calculable',chk=[{ok:Fr>=1.5,t:`Renversement : coefficient ${f(Fr,2)} (minimum 1,5)`},{ok:Fg>=1.5,t:`Glissement : coefficient ${f(Fg,2)} avec mu = ${f(mu,2)}${bh>0?' et bêche de '+f(bh*100,0)+' cm':''} (minimum 1,5)`},{ok:ec<=B/6&&xr>0,t:`Excentricité : ${f(ec*100,0)} cm (tiers central : ${f(B/6*100,0)} cm)`},{ok:smax<=sg,t:`Contrainte sur le sol : maximum ${fx(smax,0)} kPa, minimum ${f(smin,0)} kPa (admissible ${sg} kPa)`},{ok:provV>=Asv,t:`Voile, verticales : ${f(provV,1)} cm²/m fournis, ${f(Asv,1)} requis`},{ok:provH>=Asv/4,t:`Voile, horizontales : ${f(provH,1)} cm²/m fournis (minimum A/4 = ${f(Asv/4,1)})`},{ok:provB>=Asp,t:`Semelle, lit inférieur : ${f(provB,1)} cm²/m fournis, ${f(Asp,1)} requis`},{ok:provT>=Ast,t:`Semelle, lit supérieur (talon) : ${f(provT,1)} cm²/m fournis, ${f(Ast,1)} requis`}];
+const info=[['Coefficient de poussée Ka',f(Ka,3)],['Poussée horizontale',f(Ph,1)+' kN/ml'],['Moment ELU à la base du voile',f(Muv,1)+' kN·m/ml']];
+return{nom:'mur de soutènement',rep:p.r,titre:`Mur ${p.r}`,sous:`H = ${f(H,2)} m, B = ${f(B,2)} m, L = ${f(Lm,2)} m`,sect:`H${f(H,2)} B${f(B,2)}`,beton:(B*hs+e*H+e*bh)*Lm,coff:(2*H+2*hs)*Lm,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,info,ex:{foot,hkb,hkt,t:t*100}}}
+function drawMur(pg,bx,K,p){const H=+p.H*100,e=+p.e,B=+p.B,hs=+p.hs,a=+p.a,t=B-a-e,c=+p.c,E=K.ex,dv=p.dv/10,dh=p.dh/10,db=p.db/10,dt=p.dt/10,dr=p.dr/10,cw=bx.x1-bx.x0,top=bx.y1-26,lw=cw*.5,bh=+p.bh||0,y0m=bx.y0+104,Se=pick(B+90,H+hs+bh,lw-80,top-50-y0m),ue=KP/Se,yb=Math.max(y0m+bh*ue,top-50-(H+hs)*ue),yg=yb-bh*ue,x0=bx.x0+54,ux=v=>x0+v*ue,uy=v=>yb+v*ue;K.sc.push('Coupe 1:'+Se);
+pg.T(x0+B*ue/2,top-4,`COUPE TRANSVERSALE   Éch. 1:${Se}`,8,{b:1,a:'c'});
+const xs0=ux(a+e),xs1=ux(B+50);
+for(let xx=xs0+7;xx<xs1;xx+=9)for(let yy=uy(hs)+6;yy<uy(hs+H)-3;yy+=9)pg.C(xx,yy,.7,{fill:'#8D6E63',col:null});
+pg.L(xs0,uy(hs+H),xs1,uy(hs+H),{lw:1});
+for(let i=0;i<5;i++){const x=xs0+(xs1-xs0)*(i+.5)/5,y=uy(hs+H);pg.L(x,y+22,x,y+3,{lw:.7});pg.L(x-2.5,y+8,x,y+3,{lw:.7});pg.L(x+2.5,y+8,x,y+3,{lw:.7})}
+pg.T((xs0+xs1)/2,uy(hs+H)+27,`q = ${p.q} kPa`,7.5,{a:'c'});
+pg.L(x0-26,yg,x0+B*ue+30,yg,{lw:1.6});for(let i=0;i<10;i++){const x=x0-24+i*((B*ue+52)/9);pg.L(x,yg,x-6,yg-6,{lw:.5})}
+pg.P([[ux(0),uy(0)],...(bh>0?[[ux(a),uy(0)],[ux(a),uy(-bh)],[ux(a+e),uy(-bh)],[ux(a+e),uy(0)]]:[]),[ux(B),uy(0)],[ux(B),uy(hs)],[ux(a+e),uy(hs)],[ux(a+e),uy(hs+H)],[ux(a),uy(hs+H)],[ux(a),uy(hs)],[ux(0),uy(hs)]],{close:1,fill:'#F2F2F2',lw:1.3});
+const xv=ux(a+e-c-dv/2),yfv=uy(c+db+dv/2),ft=E.foot*ue;
+pg.P([[xv,uy(hs+H-c)],[xv,yfv],[xv+ft,yfv]],{col:RB,lw:Math.max(1.1,dv*ue)});
+const xf=ux(a+c+dr/2);pg.L(xf,uy(hs+H-c),xf,uy(c+db+dr/2),{col:'#2E7D32',lw:Math.max(1,dr*ue)});
+const nh=Math.floor((H-2*c)/p.sh+1e-9)+1,gy=nh>1?(H-2*c-dh)/(nh-1):0,stK=Math.max(1,Math.ceil(2.2/Math.max(.01,gy*ue))),xhb=ux(a+e-c-dv-dh/2),xhf=ux(a+c+dr+dh/2),rh=Math.max(1.5,dh/2*ue);
+for(let k=0;k<nh;k+=stK){const y=uy(hs+c+dh/2+k*gy);pg.C(xhb,y,rh,{fill:BL,col:'#0B2A5B',lw:.4});pg.C(xhf,y,rh,{fill:BL,col:'#0B2A5B',lw:.4})}
+const yB=uy(c+db/2);pg.P([[ux(c),yB+E.hkb*ue],[ux(c),yB],[ux(B-c),yB]],{col:RB,lw:Math.max(1.1,db*ue)});
+const yT=uy(hs-c-dt/2),xT=Math.max(a+c,a+e-40*dt);pg.P([[ux(xT),yT],[ux(B-c),yT],[ux(B-c),yT-E.hkt*ue]],{col:RB,lw:Math.max(1.1,dt*ue)});
+const nr=Math.floor((B-2*c)/p.sr+1e-9)+1,gr=nr>1?(B-2*c-dr)/(nr-1):0;
+for(let i=0;i<nr;i++){const x=c+dr/2+i*gr;pg.C(ux(x),uy(c+db+dr/2),Math.max(1.4,dr/2*ue),{fill:'#455A64',col:null});if(x>=a+e)pg.C(ux(x),uy(hs-c-dt-dr/2),Math.max(1.4,dr/2*ue),{fill:'#455A64',col:null})}
+dimH(pg,ux(0),ux(a),yg-22,f(a,0),{below:1});dimH(pg,ux(a),ux(a+e),yg-22,f(e,0),{below:1});dimH(pg,ux(a+e),ux(B),yg-22,f(t,0),{below:1});dimH(pg,ux(0),ux(B),yg-40,f(B,0),{below:1});
+dimV(pg,x0-46,uy(0),uy(hs),f(hs,0));dimV(pg,x0-46,uy(hs),uy(hs+H),f(H,0));
+const mxS=xs0+22,k1=Math.min(nh-1,Math.round(nh*.4));
+lead(pg,xv,uy(hs+H*.62),mxS,uy(hs+H*.62),1);lead(pg,xhb,uy(hs+c+dh/2+k1*gy),mxS,uy(hs+c+dh/2+k1*gy),2);
+lead(pg,ux(c),yB,x0-18,yB,3);lead(pg,ux(B*.86),yT,ux(B*.86),uy(hs)+16,4);lead(pg,xf,uy(hs+H*.5),ux(a)-18,uy(hs+H*.5),5);
+const xl6=ux(c+dr/2+Math.round(nr*.6)*gr);lead(pg,xl6,uy(c+db+dr/2),xl6,yg-12,6);
+pg.T(x0+B*ue/2,yg-66,`Mur ${p.r}   H = ${f(H,0)}   B = ${f(B,0)}`,8.5,{b:1,a:'c'});
+const rx=bx.x0+lw+30,rw=bx.x1-rx;let y=top-4;pg.T(rx,y,'STABILITÉ ET FERRAILLAGE (par mètre de mur)',8,{b:1});y-=14;
+(K.info||[]).forEach(r=>{pg.T(rx,y,r[0]+' : '+r[1],7.5);y-=10.5});y-=3;
+K.chk.forEach(c_=>{const ls=wrapT(c_.t,rw-44,7.5);pg.T(rx,y,c_.ok?'OK':'REVOIR',7,{b:1,col:c_.ok?'#2E7D32':'#C62828'});ls.forEach((l,i)=>{pg.T(rx+44,y,l,7.5);y-=9.5});y-=1.5});
+nomen(pg,rx,y-8,rw,K);
+note(pg,bx.x0,bx.y0+20,lw-10,'Cotes en cm. Mur en béton armé en console (semelle en T renversé), remblai horizontal. Poussée de Rankine, sans cohésion ni butée. Renversement et glissement sans surcharge sur le talon. Moments ELU : 1,35 G + 1,5 Q (1,4 sur la semelle). Pré-dimensionnement à valider par l’ingénieur.')}
+/* ===== Dalle pleine ===== */
+function kDal(p){const Lx=p.Lx*100,Ly=p.Ly*100,h=+p.h,c=+p.c,dx=p.dx/10,dy=p.dy/10,sx=+p.sx,sy=+p.sy,ts=+p.dts>0&&+p.sts>0;
+if(!(Lx>0&&Ly>0&&h>0&&sx>0&&sy>0))return{err:'Renseignez les dimensions et les armatures de la dalle.'};
+if(2*c+dx+dy>=h)return{err:'Enrobage et armatures trop grands pour l’épaisseur de la dalle.'};
+const cnt=(L,s)=>Math.floor((L-2*c)/s+1e-9)+1,nx=cnt(Ly,sx),ny=cnt(Lx,sy),bars=[wt({m:1,t:`HA${p.dx} sens x, inf.`,d:p.dx,n:nx,lu:Lx-2*c}),wt({m:2,t:`HA${p.dy} sens y, inf.`,d:p.dy,n:ny,lu:Ly-2*c})];
+if(ts)bars.push(wt({m:3,t:`HA${p.dts} sens x, sup.`,d:p.dts,n:cnt(Ly,p.sts),lu:Lx-2*c}),wt({m:4,t:`HA${p.dts} sens y, sup.`,d:p.dts,n:cnt(Lx,p.sts),lu:Ly-2*c}));
+const smax=Math.min(3*h,33),as=(d,s)=>Math.PI*d*d/4*(100/s)/100,rx=as(p.dx,sx)/h,ry=as(p.dy,sy)/h,r=Math.max(Lx,Ly)/Math.min(Lx,Ly);
+const chk=[{ok:sx<=smax,t:`Sens x : espacement ${sx} cm (maximum ${f(smax,0)} cm)`},{ok:sy<=smax,t:`Sens y : espacement ${sy} cm (maximum ${f(smax,0)} cm)`},{ok:rx>=.1&&ry>=.1,t:`Taux d’armatures : ${f(rx,2)} % (x) et ${f(ry,2)} % (y), minimum usuel 0,10 %`},{ok:h>=Math.min(Lx,Ly)/40,t:`Épaisseur : ${f(h,0)} cm (usuel L/40 à L/30, soit ${f(Math.min(Lx,Ly)/40,0)} à ${f(Math.min(Lx,Ly)/30,0)} cm)`}];
+return{nom:'dalle',rep:p.r,titre:`Dalle ${p.r}`,sous:`${f(p.Lx,2)} × ${f(p.Ly,2)} m, e = ${h} cm`,sect:`${f(p.Lx,2)}×${f(p.Ly,2)}×${h}`,beton:Lx*Ly*h/1e6,coff:(Lx*Ly+2*(Lx+Ly)*h)/1e4,bars,acier:bars.reduce((s,x)=>s+x.w,0),chk,info:[['Rapport Ly / Lx',f(r,2)+(r>2?' (porte dans 1 sens)':' (porte dans 2 sens)')]],ex:{nx,ny,ts}}}
+function drawDal(pg,bx,K,p){const Lx=p.Lx*100,Ly=p.Ly*100,h=+p.h,c=+p.c,dx=p.dx/10,dy=p.dy/10,dt=(+p.dts||0)/10,{nx,ny,ts}=K.ex,cw=bx.x1-bx.x0,top=bx.y1-26,lw=cw*.5,Se=pick(Lx,Ly,lw-100,top-bx.y0-110),u=KP/Se,px=bx.x0+56,py=top-30-Ly*u;K.sc.push('Plan 1:'+Se);
+pg.T(px+Lx*u/2,top-4,`VUE EN PLAN   Éch. 1:${Se}`,8,{b:1,a:'c'});pg.R(px,py,Lx*u,Ly*u,{lw:1.3,fill:'#FAFAFA'});
+const gx=ny>1?(Lx-2*c-dy)/(ny-1):0,gy=nx>1?(Ly-2*c-dx)/(nx-1):0,stx=Math.max(1,Math.ceil(2/Math.max(.01,gy*u))),sty=Math.max(1,Math.ceil(2/Math.max(.01,gx*u)));
+for(let j=0;j<nx;j+=stx){const y=py+(c+dx/2+j*gy)*u;pg.L(px+c*u,y,px+(Lx-c)*u,y,{col:RB,lw:Math.max(.6,dx*u*.8)})}
+for(let i=0;i<ny;i+=sty){const x=px+(c+dy/2+i*gx)*u;pg.L(x,py+c*u,x,py+(Ly-c)*u,{col:BL,lw:Math.max(.6,dy*u*.8)})}
+dimH(pg,px,px+Lx*u,py-14,f(Lx,0),{below:1});dimV(pg,px-26,py,py+Ly*u,f(Ly,0));
+const yc=py+Ly*u/2;pg.L(px-14,yc,px+Lx*u+14,yc,{lw:.7,dash:[8,2,2,2]});pg.T(px-18,yc-3,'A',8,{b:1,a:'r'});pg.T(px+Lx*u+18,yc-3,'A',8,{b:1});
+lead(pg,px+(Lx-c)*u,py+(c+dx/2)*u,px+Lx*u+20,py+(c+dx/2)*u,1);lead(pg,px+(c+dy/2)*u,py+(Ly-c)*u,px+(c+dy/2)*u,py+Ly*u+14,2);
+pg.T(px+Lx*u/2,py-34,`Dalle ${p.r}   ${f(Lx,0)} × ${f(Ly,0)} × ${f(h,0)}`,8.5,{b:1,a:'c'});
+note(pg,bx.x0,bx.y0+20,lw-10,'Cotes en cm. Nappe inférieure : sens x en rouge, sens y en bleu'+(ts?'. Nappe supérieure (vert) : treillis constructif, non représenté en plan':'')+'. Pas de crochets ni d’arrêts de barres représentés. Plan indicatif à valider par l’ingénieur.');
+const rx=bx.x0+lw+30,rw=bx.x1-rx,Ls=Math.min(Lx,6*Math.max(+p.sx,+p.sy)+2*c),Ss=pick(Ls,h,rw-130,120),us=KP/Ss,sx0=rx+34,sy0=top-34-h*us;K.sc.push('Coupe 1:'+Ss);
+pg.T(rx,top-4,`COUPE A-A   Éch. 1:${Ss}`,8,{b:1});
+pg.R(sx0,sy0,Ls*us,h*us,{lw:1.2,fill:'#F7F7F7'});const xe=sx0+(Ls<Lx?Ls:Ls-c)*us,yb1=sy0+(c+dx/2)*us,yb2=sy0+(c+dx+dy/2)*us;
+pg.L(sx0+c*us,yb1,xe,yb1,{col:RB,lw:Math.max(1.1,dx*us)});let xl=0;
+for(let x=c+dy/2;x<=Ls-c-dy/2+1e-6;x+=+p.sy){xl=sx0+x*us;pg.C(xl,yb2,Math.max(1.6,dy/2*us),{fill:BL,col:'#0B2A5B',lw:.4})}
+let xt=0;if(ts){const yt1=sy0+(h-c-dt/2)*us,yt2=sy0+(h-c-dt-dt/2)*us;pg.L(sx0+c*us,yt1,xe,yt1,{col:'#2E7D32',lw:Math.max(1.1,dt*us)});for(let x=c+dt/2;x<=Ls-c-dt/2+1e-6;x+=+p.sts){xt=sx0+x*us;pg.C(xt,yt2,Math.max(1.6,dt/2*us),{fill:'#2E7D32',col:null})}}
+if(Ls<Lx)pg.P([[sx0+Ls*us,sy0-4],[sx0+Ls*us+4,sy0+h*us*.33],[sx0+Ls*us-4,sy0+h*us*.66],[sx0+Ls*us,sy0+h*us+4]],{lw:.9});
+dimV(pg,sx0-14,sy0,sy0+h*us,f(h,0));if(Ls>=c+dy/2+(+p.sy))dimH(pg,sx0+(c+dy/2)*us,sx0+(c+dy/2+(+p.sy))*us,sy0-14,f(p.sy,0),{below:1});
+const mx=sx0+Ls*us+20,mc=sy0+h*us/2;
+lead(pg,xe,yb1,mx,mc-17,1);pg.T(mx+10,mc-19.5,`HA${p.dx} e = ${p.sx}  (sens x)`,7.5);
+lead(pg,xl,yb2,mx,mc,2);pg.T(mx+10,mc-2.5,`HA${p.dy} e = ${p.sy}  (sens y)`,7.5);
+if(ts){lead(pg,xe,sy0+(h-c-dt/2)*us,mx,mc+17,3);pg.T(mx+10,mc+14.5,`HA${p.dts} e = ${p.sts}  (sup. x)`,7.5);lead(pg,xt,sy0+(h-c-dt-dt/2)*us,mx,mc+34,4);pg.T(mx+10,mc+31.5,`HA${p.dts} e = ${p.sts}  (sup. y)`,7.5)}
+nomen(pg,rx,sy0-62,rw,K)}
+/* ===== Planning ===== */
+IC.pn='<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7 14h4M11 17h6"/>';
+let PM=today().slice(0,7);
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),pdt=s=>new Date(s+'T12:00:00'),fd=s=>s?s.split('-').reverse().join('/'):'',isW=d=>S.dim||d.getDay()!==0;
+function wdN(a,b){let n=0;if(!a||!b)return 0;for(let d=pdt(a),z=pdt(b);d<=z;d.setDate(d.getDate()+1))if(isW(d))n++;return n}
+function addWd(a,n){const d=pdt(a);let k=0;while(k<n){d.setDate(d.getDate()+1);if(isW(d))k++}return iso(d)}
+function planPct(t,x){if(!t.s||!t.e||t.e<t.s)return null;const tot=wdN(t.s,t.e);if(!tot)return null;if(x<t.s)return 0;if(x>=t.e)return 100;return Math.round(wdN(t.s,x)/tot*100)}
+function stat(t,x){if(+t.p>=100)return{k:'ok',t:'Terminé',pp:100};const pp=planPct(t,x);if(pp===null)return{k:'na',t:'À planifier',pp:null};if(x<t.s)return{k:'na',t:'À venir',pp:0};const ec=(+t.p||0)-pp;
+if(x>t.e)return{k:'ko',t:'Délai dépassé',pp,ec};if(ec>=5)return{k:'ok',t:'En avance',pp,ec};if(ec>=-5)return{k:'ok',t:'Dans les temps',pp,ec};return{k:'ko',t:'En retard',pp,ec}}
+function proj(t,x){if(!t.s||!t.e||+t.p>=100||x<t.s||!(+t.p>0))return null;const el=Math.max(1,wdN(t.s,x)),rest=Math.ceil((100-t.p)/(t.p/el)),end=addWd(x,rest);return{end,late:end>t.e?wdN(addWd(t.e,1),end):0}}
+function plTag(t){const pp=planPct(t,D);if(pp===null)return'';return ` <small class="${(+t.p||0)-pp>=-5?'ok':'bad'}" style="font-weight:600">prévu ${pp} %</small>`}
+const plTxt=t=>{const pp=planPct(t,D);return pp===null?'':` (prévu ${pp} %)`};
+function gantt(list,nd,ms,X){const cw=22,lw=104,rh=28,hh=38,W=lw+nd*cw,H=hh+Math.max(1,list.length)*rh+6,di=d=>Math.round((pdt(d)-pdt(ms))/864e5),wk='DLMMJVS';let s='';
+for(let d=0;d<nd;d++){const dt=pdt(ms);dt.setDate(1+d);const x=lw+d*cw;if(dt.getDay()===0)s+=`<rect x="${x}" y="${hh-6}" width="${cw}" height="${H-hh+6}" style="fill:var(--line)" opacity=".5"/>`;
+s+=`<text x="${x+cw/2}" y="14" text-anchor="middle" font-size="10" style="fill:var(--mute)">${wk[dt.getDay()]}</text><text x="${x+cw/2}" y="27" text-anchor="middle" font-size="11" font-weight="600" style="fill:var(--ink)">${d+1}</text>`;
+const r=S.reps[iso(dt)];if(r&&(r.travaux||r.eff>0||(r.photos&&r.photos.length)))s+=`<circle cx="${x+cw/2}" cy="${hh-5}" r="3" style="fill:var(--ok)"/>`}
+list.forEach((o,k)=>{const t=o.t,y=hh+k*rh,st=stat(t,X),a=Math.max(0,di(t.s)),b=Math.min(nd-1,di(t.e)),x1=lw+a*cw,x2=lw+(b+1)*cw,f0=di(t.s),f1=di(t.e)+1,pe=lw+(f0+(f1-f0)*Math.min(100,+t.p||0)/100)*cw,xe=Math.min(x2,Math.max(x1,pe));
+s+=`<text x="4" y="${y+rh/2+4}" font-size="11" style="fill:var(--ink)">${esc(t.n.length>15?t.n.slice(0,14)+'…':t.n)}</text><line x1="0" x2="${W}" y1="${y+rh}" y2="${y+rh}" style="stroke:var(--line)"/>`;
+s+=`<rect x="${x1}" y="${y+7}" width="${Math.max(2,x2-x1)}" height="14" rx="4" style="fill:var(--acc)" opacity=".28"/>`;if(xe>x1)s+=`<rect x="${x1}" y="${y+7}" width="${xe-x1}" height="14" rx="4" style="fill:var(${st.k==='ko'?'--ko':'--acc'})"/>`});
+const ti=di(X);if(ti>=0&&ti<nd)s+=`<line x1="${lw+(ti+.5)*cw}" x2="${lw+(ti+.5)*cw}" y1="${hh-8}" y2="${H}" style="stroke:var(--mid)" stroke-width="2" stroke-dasharray="4 3"/>`;
+return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block">${s}</svg>`}
+function tcard(t,i,X){const st=stat(t,X),pj=proj(t,X);return `<div class="card"><div class="top"><input value="${esc(t.n)}" oninput="S.tasks[${i}].n=this.value;save()" style="font-weight:700;margin:0;flex:1" aria-label="Nom de la tâche"><button onclick="plTD(${i})" aria-label="Supprimer la tâche" style="background:none;border:0;color:var(--ko);font-size:20px;padding:0 6px">✕</button></div>
+<div class="row"><label>Début<input type="date" value="${t.s||''}" onchange="plT(${i},'s',this.value)"></label><label>Fin<input type="date" value="${t.e||''}" onchange="plT(${i},'e',this.value)"></label></div>
+<label>Réalisé : <b id="pq${i}">${t.p||0} %</b><input type="range" min="0" max="100" step="5" value="${t.p||0}" oninput="S.tasks[${i}].p=+this.value;S.tasks[${i}].u=today();$('#pq${i}').textContent=this.value+' %';save()" onchange="pnv()"></label>
+<p class="h ${st.k==='ok'?'ok':st.k==='ko'?'bad':''}" style="font-weight:600">${st.t}${st.pp!=null&&t.s?` : prévu ${st.pp} %, réalisé ${t.p||0} %`:''}</p>${pj?`<p class="h">Fin estimée au rythme actuel : <b>${fd(pj.end)}</b> ${pj.late?`(retard de ${pj.late} jour(s) ouvré(s))`:'(dans les délais)'}</p>`:''}${t.u?`<p class="h">Dernier relevé : ${fd(t.u)}</p>`:''}</div>`}
+function pnv(){const X=today(),[Y,Mo]=PM.split('-').map(Number),nd=new Date(Y,Mo,0).getDate(),ms=PM+'-01',mf=PM+'-'+String(nd).padStart(2,'0'),mois=new Date(Y,Mo-1,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'}),all=S.tasks.map((t,i)=>({t,i})),inM=all.filter(o=>o.t.s&&o.t.e&&o.t.s<=mf&&o.t.e>=ms);
+let sw=0,sp=0,sr=0;inM.forEach(o=>{const w=Math.max(1,wdN(o.t.s,o.t.e));sw+=w;sp+=(planPct(o.t,X)||0)*w;sr+=Math.min(100,+o.t.p||0)*w});
+const gp=sw?Math.round(sp/sw):0,gr=sw?Math.round(sr/sw):0,ec=gr-gp,ents=Object.entries(S.reps).filter(([d])=>d.startsWith(PM)),rep=ents.filter(([d,r])=>r.travaux||r.eff>0||(r.photos&&r.photos.length)),hp=ents.reduce((s,[d,r])=>s+(+r.heures||0),0),em=rep.length?Math.round(rep.reduce((s,[d,r])=>s+(+r.eff||0),0)/rep.length*10)/10:0,wde=X>=ms?wdN(ms,X<mf?X:mf):0;
+$('#app').innerHTML=`<h1>Planning</h1>
+<div class="card"><div class="top"><button class="btn sec" style="width:auto;margin:0;padding:8px 16px" onclick="pnM(-1)" aria-label="Mois précédent">◀</button><b style="text-transform:capitalize">${mois}</b><button class="btn sec" style="width:auto;margin:0;padding:8px 16px" onclick="pnM(1)" aria-label="Mois suivant">▶</button></div>
+${inM.length?`<div style="margin-top:12px"><div class="tot"><span>Avancement prévu à ce jour</span><b>${gp} %</b></div><div class="bar"><i style="width:${gp}%"></i></div><div class="tot"><span>Avancement réel</span><b>${gr} %</b></div><div class="bar ${ec<-5?'ko':''}"><i style="width:${gr}%"></i></div><p class="h ${ec>=-5?'ok':'bad'}" style="font-weight:700;margin:0">${ec>=5?'En avance de '+ec+' points':ec>=-5?'Dans les temps':'En retard de '+(-ec)+' points'}</p></div>`:'<p class="h">Aucune tâche planifiée ce mois-ci. Ajoutez-en une ci-dessous.</p>'}</div>
+<h2>Travaux journaliers du mois</h2><div class="card"><div class="tot"><span>Rapports saisis</span><b>${rep.length} / ${wde} jour(s) ouvré(s)</b></div><div class="tot"><span>Effectif moyen</span><b>${em}</b></div><div class="tot"><span>Heures perdues (intempéries, arrêts)</span><b>${f(hp,1)} h</b></div></div>
+<h2>Diagramme du mois</h2><div class="card" style="overflow-x:auto;padding:8px">${inM.length?gantt(inM,nd,ms,X):'<p class="h" style="margin:8px">Rien à afficher.</p>'}</div>
+<p class="h">Barre claire : planifié. Barre foncée : réalisé. Pointillé : aujourd’hui. Point vert : jour avec rapport journalier.</p>
+<button class="btn" onclick="pnPdf()">Planning en PDF (partager)</button>
+<label class="chk" style="display:flex;gap:10px;align-items:center;margin:12px 0"><input type="checkbox" ${S.dim?'checked':''} onchange="S.dim=this.checked;save();pnv()" style="width:auto;margin:0">Compter le dimanche comme jour travaillé</label>
+<h2>Tâches</h2>${all.map(o=>tcard(o.t,o.i,X)).join('')||'<p class="h">Aucune tâche.</p>'}
+<h2>Ajouter une tâche</h2><div class="card"><label>Nom<input id="pnN" placeholder="Ex. : Coulage des poteaux"></label><div class="row"><label>Début<input id="pnS" type="date" value="${X}"></label><label>Fin<input id="pnE" type="date" value="${iso(new Date(pdt(X).getTime()+13*864e5))}"></label></div><button class="btn" onclick="pnAdd()">Ajouter au planning</button></div>
+<p class="h">Le réalisé se met à jour ici ou dans l’onglet Chantier (Avancement du rapport du jour). Le « prévu » compte les jours ouvrés entre le début et la fin.</p>`}
+function pnAdd(){const n=$('#pnN').value.trim(),s=$('#pnS').value,e=$('#pnE').value;if(!n){msg('Donnez un nom à la tâche.');return}if(s&&e&&e<s){msg('La date de fin est avant le début.');return}S.tasks.push({n,p:0,s,e});save();pnv()}
+function plT(i,k,v){S.tasks[i][k]=v;save();pnv()}
+function plTD(i){if(confirm('Supprimer cette tâche ?')){S.tasks.splice(i,1);save();pnv()}}
+function pnM(d){const[y,m]=PM.split('-').map(Number),dt=new Date(y,m-1+d,1);PM=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');pnv()}
+function planningPages(){const L=S.pap==='letter',W=L?792:842,H=L?612:595,m=24,ac=S.col||'#1565C0',X=today(),[Y,Mo]=PM.split('-').map(Number),nd=new Date(Y,Mo,0).getDate(),ms=PM+'-01',mf=PM+'-'+String(nd).padStart(2,'0'),mois=new Date(Y,Mo-1,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'}),list=S.tasks.filter(t=>t.s&&t.e&&t.s<=mf&&t.e>=ms),
+cols=[['Tâche',150,'l'],['Début',44,'c'],['Fin',44,'c'],['Prévu',38,'r'],['Réel',38,'r'],['Statut',84,'l']],cx=[];let a=m;cols.forEach(c=>{cx.push(a);a+=c[1]});const gx=a+8,gw=W-m-gx,cd=gw/nd,rh=20,per=Math.max(4,Math.floor((H-m*2-100)/rh)),pages=[],li=(c,k)=>'#'+[1,3,5].map(i=>Math.round(255-(255-parseInt(c.slice(i,i+2),16))*k).toString(16).padStart(2,'0')).join(''),chunks=[];
+for(let i=0;i<Math.max(1,list.length);i+=per)chunks.push(list.slice(i,i+per));
+const di=d=>Math.round((pdt(d)-pdt(ms))/864e5),al=(c,i)=>c[2]==='l'?cx[i]+4:c[2]==='c'?cx[i]+c[1]/2:cx[i]+c[1]-4;
+chunks.forEach((ch,pi)=>{const pg=new Pg(W,H);pages.push(pg);
+pg.R(0,H-62,W,62,{fill:ac,col:null});pg.T(m,H-30,'PLANNING DES TRAVAUX',17,{b:1,col:'#FFFFFF'});pg.T(m,H-48,mois.charAt(0).toUpperCase()+mois.slice(1)+(S.chan?'  —  '+fitT(S.chan,W/2,9.5):''),9.5,{col:'#FFFFFF'});pg.T(W-m,H-30,fitT(S.ent||'',W/2.2,11,1),11,{b:1,col:'#FFFFFF',a:'r'});pg.T(W-m,H-48,'Édité le '+new Date().toLocaleDateString('fr-FR'),8.5,{col:'#FFFFFF',a:'r'});
+let y=H-62-14;const yh=y-rh,yb2=yh-Math.max(1,ch.length)*rh;
+for(let d=0;d<nd;d++){const dt=pdt(ms);dt.setDate(1+d);if(dt.getDay()===0)pg.R(gx+d*cd,yb2,cd,yh-yb2,{fill:'#EDEFF3',col:null})}
+pg.R(m,yh,W-2*m,rh,{fill:'#E4E9F0',col:null});cols.forEach((c,i)=>pg.T(al(c,i),yh+7,c[0],8,{b:1,a:c[2]}));
+for(let d=0;d<nd;d++)pg.T(gx+d*cd+cd/2,yh+7,d+1,6.5,{a:'c',b:1});
+ch.forEach((t,k)=>{const st=stat(t,X),yy=yh-(k+1)*rh;pg.L(m,yy,W-m,yy,{col:'#D5DCE6',lw:.5});
+[fitT(t.n,cols[0][1]-8,8),fd(t.s).slice(0,5),fd(t.e).slice(0,5),st.pp==null?'—':st.pp+' %',(+t.p||0)+' %',st.t].forEach((tx,i)=>pg.T(al(cols[i],i),yy+7,fitT(tx,cols[i][1]-6,8),8,{a:cols[i][2],b:i===5,col:i===5?(st.k==='ko'?'#C62828':st.k==='ok'?'#2E7D32':'#555555'):'#000000'}));
+const a0=Math.max(0,di(t.s)),b0=Math.min(nd-1,di(t.e)),x1=gx+a0*cd,x2=gx+(b0+1)*cd,f0=di(t.s),f1=di(t.e)+1,pe=gx+(f0+(f1-f0)*Math.min(100,+t.p||0)/100)*cd,xe=Math.min(x2,Math.max(x1,pe));
+pg.R(x1,yy+5,Math.max(1,x2-x1),10,{fill:li(ac,.3),col:null});if(xe>x1)pg.R(x1,yy+5,xe-x1,10,{fill:st.k==='ko'?'#C62828':ac,col:null})});
+const ti=di(X);if(ti>=0&&ti<nd)pg.L(gx+(ti+.5)*cd,yb2,gx+(ti+.5)*cd,yh+rh,{col:'#E65100',lw:1.2,dash:[3,2]});
+pg.T(m,m+6,'Barre claire : planifié. Barre foncée : réalisé (rouge si en retard). Pointillé orange : aujourd’hui. Jours ouvrés : '+(S.dim?'lundi au dimanche':'lundi au samedi')+'.',7.5,{col:'#555555'});pg.T(W-m,m+6,'Page '+(pi+1)+'/'+chunks.length,7.5,{a:'r',col:'#555555'})});
+return pages}
+function pnPdf(){shareFile('Planning-'+PM+'.pdf','application/pdf',buildPdf(planningPages()),'Planning')}
 
 theme();applyCol();setPap();lockInit();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
