@@ -107,17 +107,17 @@ $('#app').innerHTML=`<h1>Chantier</h1>${dash()}<div class="card"><label>Date du 
 <label>Travaux réalisés<textarea rows="3" oninput="R().travaux=this.value;save()">${esc(r.travaux)}</textarea></label>
 <label>Incidents et observations<textarea rows="2" oninput="R().incid=this.value;save()">${esc(r.incid)}</textarea></label>
 <label class="btn sec">${ic('cam',20)}Ajouter des photos<input type="file" accept="image/*" capture="environment" multiple hidden onchange="addPh(this)"></label>
-<div class="ph">${r.photos.map((p,i)=>`<img src="${p}" alt="Photo ${i+1}" onclick="delPh(${i})">`).join('')}</div>${r.photos.length?'<p class="h">Touchez une photo pour la supprimer.</p>':''}</div>
+<div class="ph">${r.photos.map((p,i)=>`<img src="${phUrl(p)}" alt="Photo ${i+1}" onclick="delPh(${i})">`).join('')}</div>${r.photos.length?'<p class="h">Touchez une photo pour la supprimer.</p>':''}</div>
 <h2>Avancement</h2><div class="card">${S.tasks.map((t,i)=>`<div class="tk"><span>${esc(t.n)}${plTag(t)}</span><b id="p${i}">${t.p} %</b><input type="range" min="0" max="100" step="5" value="${t.p}" aria-label="Avancement ${esc(t.n)}" oninput="S.tasks[${i}].p=+this.value;$('#p${i}').textContent=this.value+' %';S.tasks[${i}].u=D;save()"></div>`).join('')}
 <div class="row"><label>Nouvelle tâche<input id="nt"></label><button class="btn sec" style="width:auto;padding:11px 16px" onclick="addT()">Ajouter</button></div></div>
 <button class="btn" onclick="rapport()">Générer le rapport du jour</button>`}
-function addPh(el){[...el.files].forEach(f=>shrink(f,d=>{R().photos.push(d);save();if(tab==='ch')ch()}))}
+function addPh(el){[...el.files].forEach(f=>shrink(f,d=>{R().photos.push(phRef(d));save();if(tab==='ch')ch()}))}
 function delPh(i){R().photos.splice(i,1);save();ch()}
 function addT(){const v=$('#nt').value.trim();if(v){S.tasks.push({n:v,p:0});save();ch()}}
 function ov(h){$('#ov').innerHTML=`<div class="doc"><div class="noprint" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" onclick="doPrint()">Imprimer</button><button class="btn" onclick="sharePdf()">PDF / Partager</button><button class="btn sec" onclick="$('#ov').style.display='none'">Fermer</button></div>${S.ent||S.chan?`<p class="h"><b>${esc(S.ent||'')}</b> ${esc(S.chan||'')}</p>`:''}${h}</div>`;$('#ov').style.display='block'}
 function rapport(){const r=R(),op=S.res.filter(x=>x.st!=='Levée');
 ov(`<h1>Rapport journalier</h1><p>${new Date(D+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p><dl><dt>Météo</dt><dd>${r.meteo}${r.intemp?`, intempérie : ${r.heures} h perdues`:''}</dd><dt>Effectifs</dt><dd>${r.eff} personne(s)</dd><dt>Travaux réalisés</dt><dd>${esc(r.travaux)||'Non renseigné'}</dd><dt>Incidents et observations</dt><dd>${esc(r.incid)||'Aucun'}</dd>
-<dt>Avancement</dt><dd>${S.tasks.map(t=>`${esc(t.n)} : ${t.p} %${plTxt(t)}`).join('<br>')}</dd><dt>Réserves non levées</dt><dd>${op.length?op.map(x=>`RES-${String(x.id).padStart(3,'0')} ${esc(x.lot)} : ${esc(x.desc)}`).join('<br>'):'Aucune'}</dd></dl><div class="ph">${r.photos.map(p=>`<img src="${p}" alt="">`).join('')}</div>`)}
+<dt>Avancement</dt><dd>${S.tasks.map(t=>`${esc(t.n)} : ${t.p} %${plTxt(t)}`).join('<br>')}</dd><dt>Réserves non levées</dt><dd>${op.length?op.map(x=>`RES-${String(x.id).padStart(3,'0')} ${esc(x.lot)} : ${esc(x.desc)}`).join('<br>'):'Aucune'}</dd></dl><div class="ph">${r.photos.map(p=>`<img src="${phUrl(p)}" alt="">`).join('')}</div>`)}
 
 /* Réserves */
 function re(){ph=0;
@@ -125,11 +125,11 @@ $('#app').innerHTML=`<h1>Réserves</h1><div class="card"><label class="btn sec" 
 <div class="row"><label>Lot<select id="rl">${LOTS.map(l=>`<option>${l}</option>`).join('')}</select></label><label>Responsable<input id="rr" placeholder="Entreprise"></label></div>
 <label>Description<textarea id="rd" rows="2"></textarea></label><button class="btn" onclick="saveR()">Enregistrer la réserve</button><p class="h">La position GPS est ajoutée si vous l’autorisez.</p></div>
 <h2>${S.res.length} réserve(s), ${S.res.filter(x=>x.st!=='Levée').length} à lever</h2>${S.res.length?'':'<p class="h">Aucune réserve. Prenez une photo pour en créer une.</p>'}`+
-S.res.map((x,i)=>`<div class="card"><div class="top"><b>RES-${String(x.id).padStart(3,'0')}</b><button class="tag s${ST.indexOf(x.st)}" onclick="cyc(${i})" aria-label="Changer le statut">${x.st}</button></div>${x.photo?`<img class="rp" src="${x.photo}" alt="Photo de la réserve">`:''}<p style="margin:4px 0">${esc(x.desc)}</p><p class="h">${esc(x.lot)}, ${esc(x.resp||'responsable non défini')}, ${x.date}${x.gps?`, GPS ${x.gps}`:''}</p></div>`).reverse().join('')}
+S.res.map((x,i)=>`<div class="card"><div class="top"><b>RES-${String(x.id).padStart(3,'0')}</b><button class="tag s${ST.indexOf(x.st)}" onclick="cyc(${i})" aria-label="Changer le statut">${x.st}</button></div>${x.photo?`<img class="rp" src="${phUrl(x.photo)}" alt="Photo de la réserve">`:''}<p style="margin:4px 0">${esc(x.desc)}</p><p class="h">${esc(x.lot)}, ${esc(x.resp||'responsable non défini')}, ${x.date}${x.gps?`, GPS ${x.gps}`:''}</p></div>`).reverse().join('')}
 function rph(el){const fl=el.files[0];if(!fl)return;shrink(fl,(d,s)=>{const c=$('#cv');c.width=s.width;c.height=s.height;const x=c.getContext('2d');x.drawImage(s,0,0);c.hidden=false;$('#hint').hidden=false;ph=1;let dr=0;x.strokeStyle='#E53935';x.lineWidth=Math.max(4,c.width/70);x.lineCap='round';
 const p=e=>{const b=c.getBoundingClientRect();return[(e.clientX-b.left)*c.width/b.width,(e.clientY-b.top)*c.height/b.height]};
 c.onpointerdown=e=>{dr=1;c.setPointerCapture(e.pointerId);x.beginPath();x.moveTo(...p(e))};c.onpointermove=e=>{if(dr){x.lineTo(...p(e));x.stroke()}};c.onpointerup=c.onpointercancel=()=>dr=0})}
-function saveR(){const x={id:S.res.reduce((m,r)=>Math.max(m,r.id),0)+1,desc:$('#rd').value.trim(),lot:$('#rl').value,resp:$('#rr').value.trim(),st:'Ouverte',date:today(),photo:ph?$('#cv').toDataURL('image/jpeg',.6):'',gps:''};
+function saveR(){const x={id:S.res.reduce((m,r)=>Math.max(m,r.id),0)+1,desc:$('#rd').value.trim(),lot:$('#rl').value,resp:$('#rr').value.trim(),st:'Ouverte',date:today(),photo:ph?phRef($('#cv').toDataURL('image/jpeg',.6)):'',gps:''};
 if(!x.desc&&!x.photo){msg('Ajoutez une photo ou une description.');return}
 S.res.push(x);save();re();
 if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>{x.gps=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5);save();if(tab==='re')re()},()=>{},{timeout:5000})}
@@ -259,8 +259,8 @@ async function shareFile(name,mime,b64,title){try{if(nat()){const P=Capacitor.Pl
 const bin=atob(b64),u=Uint8Array.from(bin,c=>c.charCodeAt(0)),file=new File([u],name,{type:mime});
 if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title});return}
 const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;a.click()}catch(e){if(e&&e.name!=='AbortError')msg('Partage impossible.')}}
-function expData(){shareFile('chantier360-sauvegarde-'+today()+'.json','application/json',btoa(unescape(encodeURIComponent(JSON.stringify(S)))),'Sauvegarde Chantier360')}
-function impData(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o||!Array.isArray(o.res))throw 0;if(confirm('Remplacer les données actuelles par cette sauvegarde ?')){Object.assign(S,o);save();applyCol();setPap();$('#ov').style.display='none';render();msg('Sauvegarde importée.')}}catch(e){msg('Fichier invalide.')}})}
+function expData(){const o=JSON.parse(JSON.stringify(S));Object.values(o.reps||{}).forEach(r=>{r.photos=(r.photos||[]).map(phUrl)});(o.res||[]).forEach(x=>{x.photo=phUrl(x.photo)});shareFile('chantier360-sauvegarde-'+today()+'.json','application/json',btoa(unescape(encodeURIComponent(JSON.stringify(o)))),'Sauvegarde Chantier360')}
+function impData(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o||!Array.isArray(o.res))throw 0;if(confirm('Remplacer les données actuelles par cette sauvegarde ?')){Object.assign(S,o);MP=null;applyCol();setPap();$('#ov').style.display='none';render();phMigrate().then(()=>{save();render();msg('Sauvegarde importée.')})}}catch(e){msg('Fichier invalide.')}})}
 const WA={8217:146,339:156,8211:150,8212:151,8220:147,8221:148,8230:133,8364:128,8239:32,160:32};
 const hx=s=>[...s].map(c=>{let n=c.charCodeAt(0);n=WA[n]||(n<256?n:63);return n.toString(16).padStart(2,'0')}).join('');
 function mkPdf(title,lines){const L=S.pap==='letter',W=L?612:595,H=L?792:842,M=48,ac=S.col||'#1565C0',c=[1,3,5].map(i=>(parseInt(ac.slice(i,i+2),16)/255).toFixed(3)).join(' '),pg=[];let o='',y=0;
@@ -279,7 +279,7 @@ function reg(){$('#ov').innerHTML=`<div class="doc"><button class="btn sec" styl
 <h2>Couleurs</h2><div class="card"><div class="chips">${PAL.map(p=>`<button onclick="setCol('${p[1]}')" style="border-left:8px solid ${p[1]}">${p[0]}</button>`).join('')}</div><label>Couleur personnalisée<input type="color" value="${S.col||'#1565C0'}" onchange="setCol(this.value)" style="height:46px;padding:2px"></label><button class="btn sec" onclick="setCol('')">Couleurs d’origine</button></div>
 <h2>Documents et impression</h2><div class="card"><label>Entreprise<input value="${esc(S.ent||'')}" oninput="S.ent=this.value;save()"></label><label>Chantier<input value="${esc(S.chan||'')}" oninput="S.chan=this.value;save()"></label><label>Papier<select onchange="S.pap=this.value;save();setPap()"><option value="a4">A4</option><option value="letter" ${S.pap==='letter'?'selected':''}>Letter</option></select></label><p class="h">Ces informations apparaissent en en-tête des rapports, impressions et PDF.</p></div>
 <h2>Partage de données</h2><div class="card"><button class="btn" style="margin-top:0" onclick="expData()">Partager une sauvegarde</button><label class="btn sec">Importer une sauvegarde<input type="file" accept=".json,application/json" hidden onchange="impData(this)"></label></div>
-<button class="btn dng" onclick="logout()">Se déconnecter</button></div>`;$('#ov').style.display='block'}
+<div id="bks"></div><button class="btn dng" onclick="logout()">Se déconnecter</button></div>`;$('#ov').style.display='block'}
 
 /* ===== Moteur de dessin (PDF vectoriel + aperçu SVG) ===== */
 const HWD=("278 278 355 556 556 889 667 191 333 333 389 584 278 333 278 278"+" 556".repeat(10)+" 278 278 584 584 584 556 1015"+" 667 667 722 722 667 611 778 722 278 500 667 556 833 722 778 667 778 722 667 611 722 667 944 667 667 611"+" 278 278 278 469 556 333"+" 556 556 500 556 556 278 556 556 222 222 500 222 833 556 556 556 556 333 500 278 556 500 722 500 500 500"+" 334 260 334 584").split(' ').map(Number);
@@ -338,7 +338,7 @@ const th=Math.floor(rest/1000);if(th>0){o.push(th===1?'mille':b999(th,false)+' m
 if(rest>0)o.push(b999(rest,true));return o.join(' ')}
 /* ===== Devis PDF ===== */
 const DV=()=>{S.dv=Object.assign({cli:'',ref:'',val:30,cond:'Paiement : 50 % à la commande, solde à la réception des travaux.'},S.dv||{});return S.dv};
-function dvCard(){const d=DV();return `<div class="card"><h2 style="margin-top:0">Devis</h2><div class="row"><label>Client<input value="${esc(d.cli)}" oninput="DV().cli=this.value;save()"></label><label>Référence<input value="${esc(d.ref)}" placeholder="DEV-${ymd()}" oninput="DV().ref=this.value;save()"></label></div><label>Validité (jours)<input type="number" inputmode="numeric" value="${d.val}" oninput="DV().val=+this.value;save()"></label><label>Conditions<textarea rows="2" oninput="DV().cond=this.value;save()">${esc(d.cond)}</textarea></label><p class="h">Le devis affiche les prix de vente : prix unitaire × coefficient (${S.k}). Entreprise et chantier : à renseigner dans Réglages.</p></div>`}
+function dvCard(){const d=DV();return `<div class="card"><h2 style="margin-top:0">Devis</h2><div class="row"><label>Client<input value="${esc(d.cli)}" oninput="DV().cli=this.value;save()"></label><label>Référence<input value="${esc(d.ref)}" placeholder="DEV-${ymd()}" oninput="DV().ref=this.value;save()"></label></div><label>Validité (jours)<input type="number" inputmode="numeric" value="${d.val}" oninput="DV().val=+this.value;save()"></label><label>Conditions<textarea rows="2" oninput="DV().cond=this.value;save()">${esc(d.cond)}</textarea></label><button class="btn sec" onclick="mhist()">Historique des modifications</button><p class="h">Le devis affiche les prix de vente : prix unitaire × coefficient (${S.k}). Entreprise et chantier : à renseigner dans Réglages.</p></div>`}
 function devisPages(){const L=S.pap==='letter',W=L?612:595,H=L?792:842,M=38,ac=S.col||'#1565C0',dv=DV(),k=+S.k||1,tva=+S.tva||0,ref=dv.ref||'DEV-'+ymd();
 const rows=S.met.map((m,i)=>({n:i+1,d:m.d,u:m.u,q:m.q,pu:m.pu*k,t:m.q*m.pu*k})),ht=rows.reduce((s,r)=>s+r.t,0),tv=ht*tva/100,ttc=ht+tv;
 const cw=[28,0,34,54,72,86];cw[1]=W-2*M-cw.reduce((a,b)=>a+b,0);const xs=[];let x0=M;cw.forEach(w=>{xs.push(x0);x0+=w});
@@ -862,16 +862,52 @@ Object.keys(S.reps).sort().reverse().forEach(d=>{const r=S.reps[d];if(nz(`${r.tr
 (S.plans||[]).forEach(it=>{const K=KK(it);if(!K.err&&nz(`${K.titre} ${K.sous} ${K.nom}`).includes(q))add('Plan',K.titre,K.sous,`pt='${it.t}';cs='pl';go('ca')`)});
 el.innerHTML=R_.length?R_.join(''):'<p class="h">Aucun résultat.</p>'}
 function dash(){const X=today(),k=+S.k||1,ht=S.met.reduce((s,m)=>s+m.q*m.pu*k,0),ttc=ht*(1+(+S.tva||0)/100),dated=S.tasks.filter(t=>t.s&&t.e),late=dated.filter(t=>stat(t,X).k==='ko').length,avg=S.tasks.length?Math.round(S.tasks.reduce((s,t)=>s+(+t.p||0),0)/S.tasks.length):0,
-open=S.res.filter(x=>x.st!=='Levée').length,mo=X.slice(0,7),ents=Object.entries(S.reps).filter(([d])=>d.startsWith(mo)),rm=ents.filter(([d,r])=>r.travaux||r.eff>0).length,hp=ents.reduce((s,[d,r])=>s+(+r.heures||0),0),sz=new Blob([JSON.stringify(S)]).size,pct=Math.round(sz/5e6*100),
+open=S.res.filter(x=>x.st!=='Levée').length,mo=X.slice(0,7),ents=Object.entries(S.reps).filter(([d])=>d.startsWith(mo)),rm=ents.filter(([d,r])=>r.travaux||r.eff>0).length,hp=ents.reduce((s,[d,r])=>s+(+r.heures||0),0),sz=new Blob([JSON.stringify(S)]).size,nph=Object.keys(PHS).length,phb=Object.values(PHS).reduce((s,v)=>s+v.length,0),pct=Math.round(sz/5e6*100),
 tile=(l,v,bad)=>`<div style="flex:1 1 44%;border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0"><div class="h" style="margin:0">${l}</div><div style="font-size:20px;font-weight:700;${bad?'color:var(--ko)':''}">${v}</div></div>`,
 lg=(S.log||[]).slice(-8).reverse().map(e=>`<p class="h" style="margin:3px 0">${new Date(e.t).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} : ${esc(e.a)}</p>`).join('');
 return `<div class="card"><h2 style="margin-top:0">Tableau de bord</h2><label>Recherche dans le projet<input id="gs" type="search" placeholder="Réserve, métré, tâche, rapport, plan…" oninput="gsr(this.value)"></label><div id="gsr"></div>
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">${tile('Budget TTC',f(ttc,0)+' FCFA')}${tile('Avancement moyen',avg+' %')}${tile('Tâches en retard',late,late>0)}${tile('Réserves à lever',open,open>0)}${tile('Rapports ce mois',rm)}${tile('Heures perdues ce mois',f(hp,1)+' h')}</div>
-<div style="margin-top:12px"><div class="tot"><span>Stockage local</span><b>${f(sz/1e6,2)} Mo (${pct} %)</b></div><div class="bar ${pct>80?'ko':''}"><i style="width:${Math.min(100,pct)}%"></i></div>${pct>80?'<p class="h bad" style="font-weight:600">Stockage presque plein : exportez une sauvegarde (Réglages) et supprimez des photos.</p>':'<p class="h">Capacité approximative du navigateur : 5 Mo. Les photos sont les plus lourdes.</p>'}</div>
+<div style="margin-top:12px"><div class="tot"><span>Stockage local</span><b>${f(sz/1e6,2)} Mo (${pct} %)</b></div><div class="bar ${pct>80?'ko':''}"><i style="width:${Math.min(100,pct)}%"></i></div>${pct>80?'<p class="h bad" style="font-weight:600">Stockage presque plein : exportez une sauvegarde (Réglages) et supprimez des photos.</p>':(IDB?`<p class="h">Photos : ${f(phb/1e6,1)} Mo (${nph}) dans un stockage séparé, hors de la limite de 5 Mo.</p>`:'<p class="h">Capacité approximative du navigateur : 5 Mo. Les photos sont les plus lourdes.</p>')}</div>
 ${lg?`<details style="margin-top:8px"><summary style="cursor:pointer;font-weight:600">Activité récente</summary>${lg}</details>`:''}</div>`}
 if(!S.v){S.v=1;S.log=S.log||[];save()}
 
-theme();applyCol();setPap();lockInit();
+/* ===== Lot 2 : photos en IndexedDB, historique des métrés, sauvegardes automatiques ===== */
+const PHS={};let IDB=null;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function idbOpen(){return new Promise(res=>{try{const rq=indexedDB.open('c360db',1);rq.onupgradeneeded=()=>{const d=rq.result;if(!d.objectStoreNames.contains('photos'))d.createObjectStore('photos');if(!d.objectStoreNames.contains('backups'))d.createObjectStore('backups')};rq.onsuccess=()=>{IDB=rq.result;res(true)};rq.onerror=rq.onblocked=()=>res(false)}catch(e){res(false)}})}
+const idbTx=(st,mode,fn)=>new Promise((res,rej)=>{if(!IDB)return rej(new Error('idb'));try{const tx=IDB.transaction(st,mode),r=fn(tx.objectStore(st));tx.oncomplete=()=>res(r&&r.result);tx.onerror=tx.onabort=()=>rej(tx.error)}catch(e){rej(e)}});
+const idbPut=(st,k,v)=>idbTx(st,'readwrite',s=>s.put(v,k)),idbGet=(st,k)=>idbTx(st,'readonly',s=>s.get(k)),idbDel=(st,k)=>idbTx(st,'readwrite',s=>s.delete(k)),idbKeys=st=>idbTx(st,'readonly',s=>s.getAllKeys());
+function idbAll(st){return new Promise((res,rej)=>{if(!IDB)return rej(new Error('idb'));const tx=IDB.transaction(st,'readonly'),out={},rq=tx.objectStore(st).openCursor();rq.onsuccess=()=>{const c=rq.result;if(c){out[c.key]=c.value;c.continue()}};tx.oncomplete=()=>res(out);tx.onerror=()=>rej(tx.error)})}
+const isRef=v=>typeof v==='string'&&v.startsWith('idb:'),isData=v=>typeof v==='string'&&v.startsWith('data:'),phUrl=v=>isRef(v)?(PHS[v]||''):v;
+function phInline(id){Object.values(S.reps||{}).forEach(r=>{(r.photos||[]).forEach((p,i)=>{if(p===id)r.photos[i]=PHS[id]})});(S.res||[]).forEach(x=>{if(x.photo===id)x.photo=PHS[id]});save()}
+function phRef(d){if(!isData(d)||!IDB)return d;const id='idb:'+uid();PHS[id]=d;idbPut('photos',id.slice(4),d).catch(()=>phInline(id));return id}
+function phRefs(o){const s=new Set();Object.values(o.reps||{}).forEach(r=>(r.photos||[]).forEach(p=>isRef(p)&&s.add(p)));(o.res||[]).forEach(x=>isRef(x.photo)&&s.add(x.photo));return s}
+async function phMigrate(){if(!IDB)return 0;let n=0;
+for(const r of Object.values(S.reps||{}))for(let i=0;i<(r.photos||[]).length;i++){const d=r.photos[i];if(isData(d)){const id='idb:'+uid();try{await idbPut('photos',id.slice(4),d);PHS[id]=d;if(r.photos[i]===d){r.photos[i]=id;n++}}catch(e){}}}
+for(const x of (S.res||[])){const d=x.photo;if(isData(d)){const id='idb:'+uid();try{await idbPut('photos',id.slice(4),d);PHS[id]=d;if(x.photo===d){x.photo=id;n++}}catch(e){}}}
+if(n){save();logA(`${n} photo(s) déplacée(s) vers le stockage séparé`)}return n}
+async function autoBackup(){if(!IDB||!S.v)return;const d=today(),ks=(await idbKeys('backups')).filter(k=>/^\d{4}-\d\d-\d\d$/.test(k)).sort();if(!ks.includes(d)){await idbPut('backups',d,JSON.stringify(S));ks.push(d)}for(const k of ks.slice(0,Math.max(0,ks.length-7)))await idbDel('backups',k)}
+async function phGC(){if(!IDB||!S.v||!Array.isArray(S.res))return 0;try{const bk=await idbAll('backups'),keys=await idbKeys('photos'),keep=phRefs(S);Object.values(bk).forEach(j=>{try{phRefs(JSON.parse(j)).forEach(x=>keep.add(x))}catch(e){}});let n=0;for(const k of keys)if(!keep.has('idb:'+k)){await idbDel('photos',k);delete PHS['idb:'+k];n++}return n}catch(e){return 0}}
+async function phInit(){if(!await idbOpen())return;try{const a=await idbAll('photos');Object.keys(a).forEach(k=>{PHS['idb:'+k]=a[k]})}catch(e){}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+await phMigrate();try{await autoBackup()}catch(e){}await phGC()}
+function bkList(){const el=$('#bks');if(!el||!IDB)return;idbKeys('backups').then(ks=>{ks=ks.filter(k=>/^\d{4}-/.test(k)).sort().reverse();el.innerHTML=`<h2>Sauvegardes automatiques</h2><div class="card">${ks.length?ks.map(k=>`<div class="tot"><span>${fd(k)}</span><button class="btn sec" style="width:auto;margin:0;padding:8px 14px" onclick="bkRestore('${k}')">Restaurer</button></div>`).join(''):'<p class="h">Aucune sauvegarde pour le moment.</p>'}<p class="h">Une copie des données est faite chaque jour (7 jours conservés). Les photos sont conservées à part. Avant une restauration, l’état actuel est sauvegardé lui aussi.</p></div>`}).catch(()=>{})}
+async function bkRestore(k){if(!confirm('Restaurer la sauvegarde du '+fd(k)+' ? L’état actuel sera conservé dans une sauvegarde « avant restauration ».'))return;
+try{const o=JSON.parse(await idbGet('backups',k));if(!o||!Array.isArray(o.res))throw 0;await idbPut('backups','avant-restauration',JSON.stringify(S));Object.keys(S).forEach(x=>delete S[x]);Object.assign(S,o);MP=null;save();logA('Sauvegarde du '+fd(k)+' restaurée');applyCol();setPap();$('#ov').style.display='none';render();msg('Sauvegarde restaurée.')}catch(e){msg('Restauration impossible.')}}
+(function(){const o=window.reg;if(typeof o==='function')window.reg=function(){o();bkList()}})();
+/* Historique des modifications du métré */
+const metSnap=()=>JSON.parse(JSON.stringify(S.met||[]));let MP=metSnap();
+function metDiff(){if(MP===null){MP=metSnap();return}const a=MP,b=S.met||[];S.mh=S.mh||[];const now=Date.now(),push=(k,l,t)=>{const last=S.mh[S.mh.length-1];if(k&&last&&last.k===k&&now-last.t<90000){last.n=t.n;last.t=now}else S.mh.push(Object.assign({t:now,k,l},t))};
+if(a.length===b.length){b.forEach((m,i)=>['d','q','u','pu'].forEach(c=>{if(String(a[i][c])!==String(m[c]))push(i+':'+c+':'+a[i].d,String(m.d).slice(0,60),{c,o:a[i][c],n:m[c]})}))}
+else if(b.length>a.length){push('',(b.length-a.length)+' ligne(s) ajoutée(s)',{c:'+',o:'',n:String(b[b.length-1].d).slice(0,60)})}
+else{let i=0;while(i<b.length&&JSON.stringify(a[i])===JSON.stringify(b[i]))i++;const g=a[i]||{};push('',String(g.d||'').slice(0,60),{c:'-',o:`${g.q} ${g.u} à ${g.pu}`,n:''})}
+if(S.mh.length>300)S.mh=S.mh.slice(-300);MP=metSnap()}
+(function(){const o=window.save;window.save=function(){try{metDiff()}catch(e){}return o.apply(this,arguments)}})();
+function mhist(){const L={d:'Désignation',q:'Quantité',u:'Unité',pu:'Prix unitaire','+':'Ajout','-':'Suppression'},h=(S.mh||[]).slice().reverse();
+ov(`<h1>Historique des modifications</h1>${h.length?`<table><tr><th>Date</th><th>Ligne</th><th>Champ</th><th>Avant</th><th>Après</th></tr>${h.map(e=>`<tr><td>${new Date(e.t).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(e.l)}</td><td>${L[e.c]||e.c}</td><td>${esc(e.o)}</td><td>${esc(e.n)}</td></tr>`).join('')}</table>`:'<p>Aucune modification enregistrée depuis la mise à jour.</p>'}`)}
+
+if((S.v||0)<2){S.v=2;save()}
+theme();applyCol();setPap();Promise.race([phInit(),new Promise(r=>setTimeout(r,4000))]).catch(()=>{}).then(()=>{lockInit()});
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
