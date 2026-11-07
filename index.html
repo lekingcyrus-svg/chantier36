@@ -161,12 +161,12 @@ function cp(){const t=csv(),sh=()=>{$('#csvbox').innerHTML='<textarea rows="6">'
 const c5=x=>Math.ceil(x*20-1e-9)/20;
 
 let cs='st',sh='re';
-const CS=[['st','st','Structure'],['pl','pl','Plans BA'],['es','es','Escalier'],['bl','bl','Blocs'],['fo','fo','Fosse septique'],['su','su','Surfaces'],['do','dos','Dosage'],['ca2','car','Carrelage'],['pe','pei','Peinture'],['to','toi','Toiture'],['te','ter','Terrassement'],['pf','pla','Plancher'],['ac','aci','Acier']];
-function ca(){$('#app').innerHTML=`<h1>Calculs</h1><div class="chips">${CS.map(c=>`<button class="${cs===c[0]?'on':''}" onclick="cs='${c[0]}';ca()">${ic(c[1])}${c[2]}</button>`).join('')}</div><div id="cv2"></div><p class="warn" style="margin-top:14px">Résultats indicatifs pour le pré-dimensionnement et les quantités. À valider par un professionnel habilité.</p>`;({st:cst,pl:cpl,es:ces,bl:cbl,fo:cfo,su:csu,do:cdo,ca2:cca,pe:cpe,to:cto,te:cte,pf:cpf,ac:cac}[cs])()}
+const CS=[['st','st','Structure'],['pl','pl','Plans BA'],['es','es','Escalier'],['bl','bl','Blocs'],['fo','fo','Fosse septique'],['su','su','Surfaces'],['do','dos','Dosage'],['ca2','car','Carrelage'],['pe','pei','Peinture'],['to','toi','Toiture'],['te','ter','Terrassement'],['pf','pla','Plancher'],['ac','aci','Acier'],['pb','bael','Poutre BAEL']];
+function ca(){$('#app').innerHTML=`<h1>Calculs</h1><div class="chips">${CS.map(c=>`<button class="${cs===c[0]?'on':''}" onclick="cs='${c[0]}';ca()">${ic(c[1])}${c[2]}</button>`).join('')}</div><div id="cv2"></div><p class="warn" style="margin-top:14px">Résultats indicatifs pour le pré-dimensionnement et les quantités. À valider par un professionnel habilité.</p>`;({st:cst,pl:cpl,es:ces,bl:cbl,fo:cfo,su:csu,do:cdo,ca2:cca,pe:cpe,to:cto,te:cte,pf:cpf,ac:cac,pb:cpb}[cs])()}
 const inp=(id,lb,v)=>`<label>${lb}<input id="${id}" type="number" inputmode="decimal" step="any" value="${v}" oninput="cx()"></label>`;
 const sl=(id,lb,o,d)=>`<label>${lb}<select id="${id}" onchange="cx()">${o.map(x=>`<option value="${x[0]}" ${x[0]==d?'selected':''}>${x[1]}</option>`).join('')}</select></label>`;
 const rs=r=>r.map(x=>`<div class="tot"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
-const cx=()=>({es:oes,bl:obl,fo:ofo,su:osu,do:odo,ca2:oca,pe:ope,to:oto,te:ote,pf:opf,ac:oac}[cs])();
+const cx=()=>({es:oes,bl:obl,fo:ofo,su:osu,do:odo,ca2:oca,pe:ope,to:oto,te:ote,pf:opf,ac:oac,pb:opb}[cs])();
 function addX(){LN.forEach(x=>S.met.push({d:x.d,q:+x.q.toFixed(2),u:x.u,pu:0}));save();msg('Ajouté au DPGF')}
 const addB=`<button class="btn" onclick="addX()">Ajouter au DPGF</button>`;
 
@@ -295,7 +295,7 @@ function pdfOps(pg){let o='';
 for(const e of pg.c){const lw=e.lw==null?.6:e.lw,sc=e.col||'#000000',ds=e.dash?`[${e.dash.join(' ')}] 0 d `:'[] 0 d ';
 if(e.t==='l')o+=`q ${rgb(sc)} RG ${n2(lw)} w ${ds}${n2(e.x1)} ${n2(e.y1)} m ${n2(e.x2)} ${n2(e.y2)} l S Q\n`;
 else if(e.t==='t'){const z=e.z,w=tw(e.s,z,e.b),a=e.a==='c'?-w/2:e.a==='r'?-w:0,r=(e.rot||0)*Math.PI/180,cs=Math.cos(r),sn=Math.sin(r);
-o+=`BT /${e.b?'F2':'F1'} ${z} Tf ${rgb(e.col||'#000000')} rg ${cs.toFixed(4)} ${sn.toFixed(4)} ${(-sn).toFixed(4)} ${cs.toFixed(4)} ${n2(e.x+a*cs)} ${n2(e.y+a*sn)} Tm <${hx(e.s)}> Tj ET\n`}
+o+=`BT /${e.b?'F2':'F1'} ${z} Tf ${rgb(e.col||'#000000')} rg ${cs.toFixed(4)} ${sn.toFixed(4)} ${(-sn).toFixed(4)} ${cs.toFixed(4)} ${n2(e.x+a*cs)} ${n2(e.y+a*sn)} Tm <${hx(pdfSafe(e.s))}> Tj ET\n`}
 else{let p;
 if(e.t==='r')p=`${n2(e.x)} ${n2(e.y)} ${n2(e.w)} ${n2(e.h)} re`;
 else if(e.t==='c'){const x=e.x,y=e.y,r=e.r,k=.5523*r;p=`${n2(x+r)} ${n2(y)} m ${n2(x+r)} ${n2(y+k)} ${n2(x+k)} ${n2(y+r)} ${n2(x)} ${n2(y+r)} c ${n2(x-k)} ${n2(y+r)} ${n2(x-r)} ${n2(y+k)} ${n2(x-r)} ${n2(y)} c ${n2(x-r)} ${n2(y-k)} ${n2(x-k)} ${n2(y-r)} ${n2(x)} ${n2(y-r)} c ${n2(x+k)} ${n2(y-r)} ${n2(x+r)} ${n2(y-k)} ${n2(x+r)} ${n2(y)} c h`}
@@ -313,6 +313,8 @@ else if(e.t==='p')s+=`<${e.close?'polygon':'polyline'} points="${e.pts.map(q=>n2
 else{const an=e.a==='c'?'middle':e.a==='r'?'end':'start',tr=e.rot?` transform="rotate(${-e.rot} ${n2(e.x)} ${Y(e.y)})"`:'';
 s+=`<text x="${n2(e.x)}" y="${Y(e.y)}" font-size="${e.z}" font-family="Helvetica,Arial,sans-serif" font-weight="${e.b?700:400}" fill="${e.col||'#000000'}" text-anchor="${an}"${tr}>${esc(e.s)}</text>`}}
 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${pg.w} ${pg.h}" style="width:100%;height:auto;background:#fff;display:block;border-radius:6px">${s}</svg>`}
+const PSM={'μ':'mu','µ':'mu','α':'alpha','β':'beta','γ':'gamma','δ':'delta','θ':'theta','σ':'sigma','τ':'tau','ε':'eps','ρ':'rho','φ':'phi','λ':'lambda','ν':'nu','ψ':'psi','Σ':'Somme','Δ':'Delta','−':'-','≥':'>=','≤':'<=','→':'->','≈':'~','√':'sqrt','≠':'<>','‰':'o/oo','✓':'OK','⚠':'!'};
+const pdfSafe=s=>String(s).replace(/[μµαβγδθστερφλνψΣΔ−≥≤→≈√≠‰✓⚠]/g,c=>PSM[c]);
 function buildPdf(pages){const ob=[],kids=[];ob[1]='<</Type/Catalog/Pages 2 0 R>>';ob[3]='<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>';ob[4]='<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>';
 pages.forEach((p,i)=>{const a=5+i*2,s=pdfOps(p);kids.push(a+' 0 R');ob[a]=`<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${n2(p.w)} ${n2(p.h)}]/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents ${a+1} 0 R>>`;ob[a+1]=`<</Length ${s.length}>>\nstream\n${s}\nendstream`});
 ob[2]=`<</Type/Pages/Kids[${kids.join(' ')}]/Count ${pages.length}>>`;let out='%PDF-1.4\n';const xr=[];
@@ -905,6 +907,93 @@ if(S.mh.length>300)S.mh=S.mh.slice(-300);MP=metSnap()}
 (function(){const o=window.save;window.save=function(){try{metDiff()}catch(e){}return o.apply(this,arguments)}})();
 function mhist(){const L={d:'Désignation',q:'Quantité',u:'Unité',pu:'Prix unitaire','+':'Ajout','-':'Suppression'},h=(S.mh||[]).slice().reverse();
 ov(`<h1>Historique des modifications</h1>${h.length?`<table><tr><th>Date</th><th>Ligne</th><th>Champ</th><th>Avant</th><th>Après</th></tr>${h.map(e=>`<tr><td>${new Date(e.t).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(e.l)}</td><td>${L[e.c]||e.c}</td><td>${esc(e.o)}</td><td>${esc(e.n)}</td></tr>`).join('')}</table>`:'<p>Aucune modification enregistrée depuis la mise à jour.</p>'}`)}
+
+/* ===== Lot 3 : moteur de calcul MC (BAEL 91 révisé 99), poutre ===== */
+const MC={ver:'MC 1.0 (BAEL 91 révisé 99)',ref:'BAEL 91 révisé 99'};
+MC.mat=(fc,fe)=>{const gb=1.5,gs=1.15,fbu=.85*fc/gb,fsu=fe/gs,ft=.6+.06*fc,el=fsu/200000,al=3.5/(3.5+1000*el),ml=.8*al*(1-.4*al);return{fc,fe,gb,gs,fbu,fsu,ft,el,al,ml}};
+/* flexion simple ELU, section rectangulaire. Mu en kN.m ; b,d,dp en m ; résultats As en cm² */
+MC.flex=(Mu,b,d,dp,m)=>{const mu=Mu/1000/(b*d*d*m.fbu),r={mu,As:0,Asp:0,z:0,al:0,comp:false,warn:[]};
+if(mu<=m.ml){r.al=1.25*(1-Math.sqrt(1-2*mu));r.z=d*(1-.4*r.al);r.As=Mu/1000/(r.z*m.fsu)*1e4}
+else{r.comp=true;const Ml=m.ml*b*d*d*m.fbu*1000,zl=d*(1-.4*m.al);r.al=m.al;r.z=zl;r.Asp=(Mu-Ml)/1000/((d-dp)*m.fsu)*1e4;r.As=Ml/1000/(zl*m.fsu)*1e4+r.Asp;
+const esc=3.5e-3*(m.al*d-dp)/(m.al*d);if(esc<m.el)r.warn.push('Acier comprimé non plastifié (ε’sc < εl) : contrainte réduite, vérifier ou augmenter la section.')}
+r.Asmin=.23*b*d*m.ft/m.fe*1e4;return r};
+MC.els=(Ms,b,d,dp,As,Asp,m,fi)=>{const n=15,A=As/1e4,Ap=Asp/1e4,a=b/2,q=n*(A+Ap),c=-n*(A*d+Ap*dp),y=(-q+Math.sqrt(q*q-4*a*c))/(2*a),I=b*y**3/3+n*A*(d-y)**2+n*Ap*(y-dp)**2,sbc=Ms/1000*y/I,ss=n*Ms/1000*(d-y)/I,
+sbcL=.6*m.fc,ssL=fi==='p'?Infinity:fi==='pr'?Math.min(2/3*m.fe,110*Math.sqrt(1.6*m.ft)):Math.min(.5*m.fe,90*Math.sqrt(1.6*m.ft));return{y,I,sbc,ss,sbcL,ssL,ok:sbc<=sbcL+1e-9&&ss<=ssL+1e-9}};
+MC.asELS=(Ms,b,d,dp,Asu,Asp,m,fi)=>{if(MC.els(Ms,b,d,dp,Asu,Asp,m,fi).ok)return Asu;let lo=Asu,hi=Asu*8+10;if(!MC.els(Ms,b,d,dp,hi,Asp,m,fi).ok)return null;for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(MC.els(Ms,b,d,dp,mid,Asp,m,fi).ok)hi=mid;else lo=mid}return hi};
+MC.CAQ=[7,8,9,10,11,13,16,20,25,35,40];
+/* effort tranchant (cadres droits, pas de reprise de bétonnage) ; Vu en kN ; b,d en m ; Dc en m */
+MC.shear=(Vu,b,d,m,fi,Dc,nb)=>{const tu=Vu/1000/(b*d),tl=fi==='p'?Math.min(.2*m.fc/m.gb,5):Math.min(.15*m.fc/m.gb,4),atst=Math.max(b*m.gs*(tu-.3*m.ft)/(.9*m.fe),0)*1e4,At=nb*Math.PI*Dc*Dc/4*1e4,
+stmax=Math.min(.9*d*100,40),stmin=At/1e4*m.fe/(.4*b)*100,stc=atst>0?At/atst*100:Infinity,lim=Math.min(stc,stmax,stmin),st=[...MC.CAQ].reverse().find(x=>x<=lim)||MC.CAQ[0];
+return{tu,tl,ok:tu<=tl,atst,At,stc,stmax,stmin,st}};
+MC.bars=(As,b,c,dc)=>{const D=[10,12,14,16,20,25];let best=null;for(const dd of D){const a1=Math.PI*dd*dd/400,n=Math.max(2,Math.ceil(As/a1-1e-9)),e=n>1?(b*100-2*c*100-2*dc*100-n*dd/10)/(n-1):99;if(e>=Math.max(dd/10,2.5)){const ex=n*a1-As;if(!best||ex<best.ex-1e-6||(Math.abs(ex-best.ex)<1e-6&&n<best.n))best={n,d:dd,ex,Ap:n*a1,lits:1}}}
+if(!best){const dd=20,a1=Math.PI*dd*dd/400;best={n:Math.ceil(As/a1),d:dd,Ap:Math.ceil(As/a1)*a1,lits:2}}return best};
+/* méthode forfaitaire (BAEL annexe E.1) : portées en m ; renvoie moments en kN.m */
+MC.forf=(sp,G,Q,q)=>{const n=sp.length,al=Q/(G+Q),M0=sp.map(L=>q*L*L/8),ap=[0],cond=[];
+for(let k=1;k<n;k++){const co=n===2?.6:(k===1||k===n-1)?.5:.4;ap.push(co*Math.max(M0[k-1],M0[k]))}ap.push(0);
+const tr=sp.map((L,i)=>{const Mt1=(1+.3*al)*M0[i]-(ap[i]+ap[i+1])/2,Mt2=(i===0||i===n-1)?(1.2+.3*al)/2*M0[i]:(1+.3*al)/2*M0[i];return Math.max(Mt1,Mt2)});
+for(let i=1;i<n;i++){const r=sp[i]/sp[i-1];if(r<.8||r>1.25)cond.push(`rapport des portées ${i}/${i+1} = ${f(r,2)} (hors de 0,8 à 1,25)`)}
+if(Q>2*G)cond.push('Q > 2 G');return{al,M0,ap,tr,cond}};
+function notePdfPages(title,blocks){const W=595,H=842,M=40,ac=S.col||'#1565C0',pages=[];let pg,y;const nw=()=>{pg=new Pg(W,H);pages.push(pg);pg.R(0,H-48,W,48,{fill:ac,col:null});pg.T(M,H-30,title,13,{b:1,col:'#FFFFFF'});pg.T(W-M,H-30,fitT(S.ent||'',W/2.5,9,1),9,{col:'#FFFFFF',a:'r'});pg.T(W-M,H-42,new Date().toLocaleDateString('fr-FR'),7.5,{col:'#FFFFFF',a:'r'});y=H-70};nw();
+const need=h=>{if(y-h<M+30)nw()};
+blocks.forEach(b=>{if(b.t==='h'){need(40);y-=8;pg.T(M,y,b.s,10.5,{b:1,col:ac});pg.L(M,y-3,W-M,y-3,{col:ac,lw:.8});y-=16}
+else if(b.t==='p'){wrapT(pdfSafe(b.s),W-2*M,8.5).forEach(l=>{need(12);pg.T(M,y,l,8.5,{col:b.c||'#222222',b:b.b});y-=11.5});y-=3}
+else{const cw=[150,170,100,W-2*M-420];b.rows.forEach((r,i)=>{const ls=r.map((t,j)=>wrapT(pdfSafe(t),cw[j]-8,8,j===2));const hh=Math.max(...ls.map(a=>a.length))*10+6;need(hh);if(i%2===0)pg.R(M,y-hh+3,W-2*M,hh,{fill:'#F3F6FA',col:null});let x=M;ls.forEach((a,j)=>{a.forEach((l,k)=>pg.T(x+4,y-6-k*10,l,8,{b:j===2,col:j===3?'#555555':'#000000'}));x+=cw[j]});y-=hh})}});
+pages.forEach((p,i)=>p.T(W/2,20,`${MC.ver} — page ${i+1}/${pages.length} — résultats à contrôler par une personne compétente`,7,{a:'c',col:'#6B7785'}));return pages}
+/* calcul complet d'une poutre ; lit le formulaire */
+function pbCalc(){const v=id=>NV(id),T=$('#xbt').value,b=v('xbb')/100,h=v('xbh')/100,c=v('xbc')/100,Dl=v('xbd')/1000,Dc=v('xbk')/1000,nb=v('xbn'),fc=v('xbf'),fe=v('xbe'),fi=$('#xbx').value,m=MC.mat(fc,fe),d=h-c-Dc-Dl/2,dp=c+Dc+Dl/2;
+if(!(b>0&&h>0&&d>.05))return{err:'Dimensions incorrectes.'};
+const sp=String($('#xbp').value).split(/[;\s/]+/).map(x=>parseFloat(String(x).replace(',','.'))).filter(x=>x>0),pp=+$('#xbw').value?25*b*h:0,G=v('xbG')+pp,Q=v('xbQ'),qu=1.35*G+1.5*Q,qs=G+Q,R={m,b,h,c,d,dp,fi,T,sp,G,Q,qu,qs,pp,Dc,nb,Dl,sec:[],steps:[],warn:[],chk:[]},F=(x,k)=>f(x,k==null?2:k);
+R.steps.push(['Matériaux : fbu','fbu = 0,85·fc28 / (θ·γb)',F(m.fbu)+' MPa','A.4.3,41'],['Matériaux : fsu','fsu = fe / γs',F(m.fsu,1)+' MPa','A.4.3,2'],['Matériaux : ft28','ft28 = 0,6 + 0,06·fc28',F(m.ft)+' MPa','A.2.1,12'],['Hauteur utile','d = h − c − Øcad − Ø/2',F(d*100,1)+' cm','A.4.1'],['Limite μl','μl = 0,8·αl·(1 − 0,4·αl), αl = 3,5/(3,5+1000·εl)',F(m.ml,4),'A.4.3,41']);
+if(pp)R.steps.push(['Poids propre','gpp = 25·b·h',F(pp)+' kN/m','NF P06-004']);
+R.steps.push(['Combinaisons','qu = 1,35·G + 1,5·Q ; qser = G + Q',`qu = ${F(qu)} kN/m ; qser = ${F(qs)} kN/m`,'A.3.3,21 / A.3.3,3']);
+let Vu=0,tr=null,L0=0,Mt0=0,M00=0;
+if(T==='iso'){const L=sp[0]||5;L0=L;R.sec.push({n:'Mi-travée',Mu:qu*L*L/8,Ms:qs*L*L/8,top:false});Vu=qu*L/2;R.steps.push(['Moment ELU','Mu = qu·L²/8',F(R.sec[0].Mu)+' kN·m',''],['Moment ELS','Mser = qser·L²/8',F(R.sec[0].Ms)+' kN·m',''],['Effort tranchant','Vu = qu·L/2',F(Vu)+' kN','']);Mt0=R.sec[0].Ms;M00=Mt0;R.warn.push('Appuis de rive : prévoir des aciers de chapeau pour 0,15·M0 (encastrement partiel).')}
+else if(T==='con'){if(sp.length<2)return{err:'Donnez au moins deux portées séparées par un point-virgule (ex. : 4,5;5;4,5).'};const fu=MC.forf(sp,G,Q,qu),fs=MC.forf(sp,G,Q,qs);R.forf=fu;
+if(fu.cond.length)R.warn.push('Méthode forfaitaire non applicable : '+fu.cond.join(' ; ')+'. Utiliser la méthode de Caquot ou une analyse de portique.');
+R.steps.push(['Coefficient α','α = Q / (G + Q)',F(fu.al,3),'E.1,2']);
+sp.forEach((L,i)=>{R.sec.push({n:'Travée '+(i+1),Mu:fu.tr[i],Ms:fs.tr[i],top:false,L})});for(let k=1;k<sp.length;k++)R.sec.push({n:'Appui '+(k+1),Mu:fu.ap[k],Ms:fs.ap[k],top:true});
+R.steps.push(['Moments isostatiques','M0i = qu·Li²/8',fu.M0.map(x=>F(x,1)).join(' ; ')+' kN·m','E.1,3'],['Moments sur appuis','0,6 M0 (2 travées) ; 0,5 M0 appuis voisins de rive ; 0,4 M0 autres',fu.ap.slice(1,-1).map(x=>F(x,1)).join(' ; ')+' kN·m','E.1,3'],['Moments en travée','Mt ≥ max[(1+0,3α)M0 − (Mw+Me)/2 ; (1,2+0,3α)M0/2 ou (1+0,3α)M0/2]',fu.tr.map(x=>F(x,1)).join(' ; ')+' kN·m','E.1,3']);
+const k=sp.length===2?1.15:1.10;Vu=Math.max(...sp.map(L=>qu*L/2))*k;R.steps.push(['Effort tranchant','Vu = qu·L/2 majoré de '+Math.round((k-1)*100)+' % sur le 1er appui intermédiaire',F(Vu)+' kN','E.1,2']);
+L0=Math.max(...sp);const i0=sp.indexOf(L0);Mt0=fs.tr[i0];M00=qs*L0*L0/8;R.warn.push('Appuis de rive : prévoir des aciers de chapeau pour 0,15·M0.')}
+else{const Mu=v('xbM'),Ms=v('xbS'),Vd=v('xbV');R.sec.push({n:'Section donnée',Mu,Ms,top:false});Vu=Vd;R.steps.push(['Sollicitations données','Mu, Mser, Vu saisis par l’utilisateur',`Mu = ${F(Mu)} kN·m ; Mser = ${F(Ms)} kN·m ; Vu = ${F(Vu)} kN`,'—'])}
+R.sec.forEach(s=>{const x=MC.flex(s.Mu,b,d,dp,m);Object.assign(s,x);const as0=Math.max(x.As,x.Asmin),asE=MC.asELS(s.Ms,b,d,dp,as0,x.Asp,m,fi);s.Asu=as0;s.Ase=asE;s.Asr=asE==null?as0:Math.max(as0,asE);s.bars=MC.bars(s.Asr,b,c,Dc);s.bp=x.Asp>0?MC.bars(x.Asp,b,c,Dc):null;s.els=MC.els(s.Ms,b,d,dp,s.Asr,x.Asp,m,fi);if(asE==null)R.warn.push(s.n+' : section insuffisante à l’ELS, augmenter b ou h.');x.warn.forEach(w=>R.warn.push(s.n+' : '+w));
+R.steps.push([s.n+' : moment réduit','μ = Mu / (b·d²·fbu)',F(x.mu,4)+(x.comp?' > μl : acier comprimé':''),'A.4.3,41'],[s.n+' : bras de levier','α = 1,25·(1 − √(1 − 2μ)) ; z = d·(1 − 0,4α)',`α = ${F(x.al,3)} ; z = ${F(x.z*100,1)} cm`,'A.4.3,41'],[s.n+' : armatures ELU','As = Mu / (z·fsu)'+(x.comp?' + As’':''),F(x.As)+' cm²'+(x.comp?` (dont As’ = ${F(x.Asp)} cm²)`:''),'A.4.3'],[s.n+' : armatures minimales','Amin = 0,23·b·d·ft28/fe',F(x.Asmin)+' cm²','A.4.2'],[s.n+' : ELS','σbc = Mser·y/I ≤ 0,6·fc28 ; σs = 15·Mser·(d−y)/I ≤ σs lim',`σbc = ${F(s.els.sbc)} MPa (≤ ${F(s.els.sbcL,1)}) ; σs = ${F(s.els.ss,1)} MPa (≤ ${isFinite(s.els.ssL)?F(s.els.ssL,1):'—'})`,'A.4.5'],[s.n+' : armatures retenues','As = max(ELU, Amin, ELS)',`${F(s.Asr)} cm² soit ${s.bars.n} HA${s.bars.d}${s.bars.lits>1?' (2 lits)':''} = ${F(s.bars.Ap)} cm²`,''])});
+R.vu=Vu;R.sh=MC.shear(Vu,b,d,m,fi,Dc,nb);const sh=R.sh;
+R.steps.push(['Contrainte tangente','τu = Vu / (b·d)',F(sh.tu)+' MPa (limite '+F(sh.tl)+' MPa)','A.5.1,1'],['Cadres : section','At/st ≥ b·γs·(τu − 0,3·ft28) / (0,9·fe)',F(sh.atst)+' cm²/m','A.5.1,23'],['Cadres : espacement','st ≤ min(0,9d ; 40 cm ; At·fe/(0,4·b))',`${F(sh.stc,1)} ; ${F(sh.stmax,1)} ; ${F(sh.stmin,1)} cm → ${sh.st} cm (série de Caquot)`,'A.5.1,22 / A.5.1,23'],['Cadres retenus','Øt = '+(Dc*1000)+' mm, '+nb+' brins',`espacement ${sh.st} cm, 1er cadre à ${F(sh.st/2,1)} cm de l’appui`,'A.5.1,22']);
+R.chk.push({ok:sh.ok,t:`Effort tranchant : τu = ${F(sh.tu)} MPa (limite ${F(sh.tl)} MPa)`});
+R.sec.forEach(s=>{R.chk.push({ok:s.Asr<=s.bars.Ap+1e-9&&s.bars.lits===1,t:`${s.n} : ${F(s.Asr)} cm² soit ${s.bars.n} HA${s.bars.d}${s.bars.lits>1?' sur 2 lits (vérifier d)':' (1 lit)'}`});R.chk.push({ok:s.els.ok,t:`${s.n} : ELS σbc ${F(s.els.sbc)} / ${F(s.els.sbcL,1)} MPa${isFinite(s.els.ssL)?', σs '+F(s.els.ss,1)+' / '+F(s.els.ssL,1)+' MPa':''}`})});
+if(T!=='mom'){const Lm=L0,hl=h/Lm,r1=Math.max(1/16,Mt0/(10*M00)),As1=Math.max(...R.sec.filter(s=>!s.top).map(s=>s.Asr)),rho=As1/1e4/(b*d),okF=hl>=r1&&rho<=4.2/fe;R.fl={hl,r1,rho,lim:4.2/fe,ok:okF};R.steps.push(['Flèche : dispense de calcul','h/L ≥ max(1/16 ; Mt/(10·M0)) et As/(b·d) ≤ 4,2/fe',`h/L = ${F(hl,3)} (≥ ${F(r1,3)}) ; As/(b·d) = ${F(rho*100,2)} % (≤ ${F(4.2/fe*100,2)} %)`,'B.6.5.1']);R.chk.push({ok:okF,t:okF?'Flèche : vérifiée par la règle simplifiée (calcul de flèche non nécessaire)':'Flèche : règle simplifiée non satisfaite, calcul de la flèche à mener'})}
+else R.chk.push({ok:true,t:'Flèche : non vérifiée en mode moments donnés'});
+if(Q>0&&T!=='mom'&&Q>2*G)R.warn.push('Q > 2 G : charges d’exploitation importantes.');
+return R}
+function pbNote(R){const F=(x,k)=>f(x,k==null?2:k),bl=[];const t=R.T==='iso'?'Poutre isostatique':R.T==='con'?'Poutre continue (méthode forfaitaire)':'Poutre, sollicitations données';
+bl.push({t:'h',s:'1. Hypothèses et données'},{t:'p',s:`Référentiel : ${MC.ref}. Moteur de calcul : ${MC.ver}. Ouvrage : ${t}. ${S.chan?'Chantier : '+S.chan+'. ':''}`},{t:'t',rows:[['Section','b × h = '+F(R.b*100,0)+' × '+F(R.h*100,0)+' cm','',''],['Béton / acier','fc28 = '+R.m.fc+' MPa ; fe = '+R.m.fe+' MPa (HA)','',''],['Enrobage','c = '+F(R.c*100,1)+' cm ; Øcad = '+F(R.Dc*1000,0)+' mm','',''],['Fissuration',R.fi==='p'?'Peu préjudiciable':R.fi==='pr'?'Préjudiciable':'Très préjudiciable','',''],['Charges',`G = ${F(R.G)} kN/m (dont poids propre ${F(R.pp)}) ; Q = ${F(R.Q)} kN/m`,'',''],['Portées',R.T==='mom'?'—':R.sp.join(' ; ')+' m','','']]},{t:'h',s:'2. Calculs étape par étape'},{t:'t',rows:R.steps.map(s=>[s[0],s[1],s[2],s[3]])},{t:'h',s:'3. Vérifications'},...R.chk.map(c=>({t:'p',s:(c.ok?'[OK] ':'[A REVOIR] ')+c.t,c:c.ok?'#1B6E2D':'#C62828',b:!c.ok})));
+if(R.warn.length)bl.push({t:'h',s:'4. Avertissements'},...R.warn.map(w=>({t:'p',s:'- '+w})));
+bl.push({t:'h',s:'5. Synthèse du ferraillage'},{t:'t',rows:R.sec.map(s=>[s.n,`${s.bars.n} HA${s.bars.d} (${F(s.bars.Ap)} cm²) ${s.top?'en partie haute':'en partie basse'}${s.bp?' + comprimé '+s.bp.n+' HA'+s.bp.d:''}`,'As = '+F(s.Asr)+' cm²','']).concat([['Cadres','HA'+(R.Dc*1000)+', '+R.nb+' brins, espacement '+R.sh.st+' cm','','']])},{t:'p',s:'Ce document est une note de calcul assistée par ordinateur. Il ne remplace pas le jugement d’un ingénieur : les hypothèses, les charges et les dispositions constructives doivent être contrôlées avant exécution.',c:'#555555'});return notePdfPages('NOTE DE CALCUL - POUTRE BAEL',bl)}
+IC.bael='<path d="M3 9h18v6H3z"/><path d="M6 15v4M18 15v4"/><path d="M7 12h10"/>';
+function cpb(){const g=PL().g;$('#cv2').innerHTML=`<div class="card">${sl('xbt','Type de poutre',[['iso','Isostatique (2 appuis)'],['con','Continue (méthode forfaitaire)'],['mom','Moments et effort donnés']],'iso')}
+<label>Portées d’axe en axe (m), séparées par ;<input id="xbp" value="5" oninput="cx()"></label>
+<div class="row">${inp('xbG','G, permanentes (kN/m)',12)}${inp('xbQ','Q, exploitation (kN/m)',6)}</div>${sl('xbw','Poids propre',[[1,'Ajouté automatiquement'],[0,'Déjà compris dans G']],1)}
+<div class="row">${inp('xbM','Mu donné (kN·m)',100)}${inp('xbS','Mser donné (kN·m)',72)}</div>${inp('xbV','Vu donné (kN)',120)}
+<div class="row">${inp('xbb','Largeur b (cm)',25)}${inp('xbh','Hauteur h (cm)',50)}</div>
+<div class="row">${inp('xbc','Enrobage (cm)',3)}${sl('xbd','Ø principales estimé (mm)',[[10,'10'],[12,'12'],[14,'14'],[16,'16'],[20,'20'],[25,'25']],14)}</div>
+<div class="row">${sl('xbk','Ø cadres (mm)',[[6,'6'],[8,'8'],[10,'10']],8)}${sl('xbn','Brins par cadre',[[2,'2'],[4,'4']],2)}</div>
+<div class="row">${sl('xbf','Béton fc28 (MPa)',[[20,'20'],[25,'25'],[30,'30'],[35,'35']],g.fc)}${sl('xbe','Acier fe (MPa)',[[400,'400'],[500,'500']],g.fe)}</div>
+${sl('xbx','Fissuration',[['p','Peu préjudiciable'],['pr','Préjudiciable'],['tp','Très préjudiciable']],'p')}<div id="ox"></div></div>
+<p class="h">Référentiel : BAEL 91 révisé 99, section rectangulaire, cadres droits, béton non repris. Portées et charges en mode isostatique ou continu ; en mode « moments donnés », saisissez Mu, Mser et Vu. L’Eurocode 2 sera ajouté comme référentiel distinct, sans mélange des méthodes.</p>`;opb()}
+let PBR=null;
+function opb(){const R=pbCalc();PBR=R;if(R.err){$('#ox').innerHTML=`<p class="warn">${R.err}</p>`;return}const F=(x,k)=>f(x,k==null?2:k);
+$('#ox').innerHTML=`<div style="margin-top:12px">${R.sec.map(s=>`<div class="tot"><span><b>${s.n}</b> : Mu = ${F(s.Mu,1)} kN·m</span><b>${s.bars.n} HA${s.bars.d}${s.bars.lits>1?' (2 lits)':''}</b></div><p class="h" style="margin:0 0 6px">As = ${F(s.Asr)} cm²${s.Asp>0?' ; acier comprimé '+F(s.Asp)+' cm²':''} ; ${s.top?'partie haute':'partie basse'}</p>`).join('')}
+<div class="tot"><span><b>Cadres</b> : HA${R.Dc*1000}, ${R.nb} brins</span><b>e = ${R.sh.st} cm</b></div><p class="h" style="margin:0 0 6px">Premier cadre à ${F(R.sh.st/2,1)} cm de l’appui ; τu = ${F(R.sh.tu)} MPa</p>
+${R.chk.map(x=>`<p class="h ${x.ok?'ok':'bad'}" style="margin:3px 0">${x.ok?'✓':'⚠'} ${x.t}</p>`).join('')}${R.warn.map(w=>`<p class="h bad" style="margin:3px 0">⚠ ${w}</p>`).join('')}
+<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Détail du calcul, formules et références</summary>${R.steps.map(s=>`<p class="h" style="margin:6px 0"><b>${s[0]}</b><br>${s[1]}<br><b>${s[2]}</b> <span class="h">${s[3]?'('+s[3]+')':''}</span></p>`).join('')}</details></div>
+<button class="btn" onclick="pbPdf()">Note de calcul en PDF</button><button class="btn sec" onclick="pbPlan()">Utiliser dans le plan de la poutre</button>`}
+function pbPdf(){if(!PBR||PBR.err){msg('Corrigez les données.');return}shareFile('Note-de-calcul-poutre-'+ymd()+'.pdf','application/pdf',buildPdf(pbNote(PBR)),'Note de calcul')}
+function pbPlan(){const R=PBR;if(!R||R.err){msg('Corrigez les données.');return}const p=PL().pou,bot=R.sec.filter(s=>!s.top),top=R.sec.filter(s=>s.top),bm=bot.reduce((a,s)=>s.bars.Ap>a.bars.Ap?s:a,bot[0]);
+Object.assign(p,{typ:R.T==='con'?'con':'iso',b:Math.round(R.b*100),h:Math.round(R.h*100),c:Math.round(R.c*1000)/10,ni:bm.bars.n,di:bm.bars.d,dc:R.Dc*1000,sa:R.sh.st,sc:Math.max(R.sh.st,Math.min(Math.floor(R.sh.st*2),Math.floor(R.sh.stmax)))});
+if(R.T==='con'){p.nt=R.sp.length;p.pl=R.sp.join(';');const tm=top.reduce((a,s)=>s.bars.Ap>a.bars.Ap?s:a,top[0]);p.ns=2;p.ds=Math.max(12,Math.min(16,tm.bars.d));const ex=Math.max(0,Math.ceil((tm.Asr-2*Math.PI*p.ds*p.ds/400)/(Math.PI*p.ds*p.ds/400)));p.nch=Math.min(ex,4);p.dch=p.ds}
+else{p.L=R.sp[0]||5;p.ns=2;p.ds=12;p.nch=0}
+save();logA('Armatures du calcul BAEL transférées vers le plan de poutre');pt='pou';cs='pl';ca();msg('Paramètres transférés : vérifiez le plan.')}
 
 if((S.v||0)<2){S.v=2;save()}
 theme();applyCol();setPap();Promise.race([phInit(),new Promise(r=>setTimeout(r,4000))]).catch(()=>{}).then(()=>{lockInit()});
